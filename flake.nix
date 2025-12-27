@@ -82,7 +82,7 @@
             # ============================================
 
             # Frama-C - Main static analyzer for C
-            frama-c
+            framac
 
             # Why3 - Multi-prover verification platform
             why3
@@ -283,7 +283,7 @@
             export KLEE_RUNTIME_LIBRARY_PATH="${klee}/lib/klee/runtime"
 
             # Frama-C plugin path
-            export FRAMAC_PLUGIN="${pkgs.frama-c}/lib/frama-c/plugins"
+            export FRAMAC_PLUGIN="${pkgs.framac}/lib/frama-c/plugins"
 
             # Add custom scripts to PATH
             export PATH="$PWD/scripts:$PATH"
@@ -301,7 +301,7 @@
           '';
 
           # Environment variables
-          FRAMA_C_SHARE = "${pkgs.frama-c}/share/frama-c";
+          FRAMA_C_SHARE = "${pkgs.framac}/share/frama-c";
           WHY3_DATADIR = "${pkgs.why3}/share/why3";
           Z3_PATH = "${pkgs.z3}/bin/z3";
 
