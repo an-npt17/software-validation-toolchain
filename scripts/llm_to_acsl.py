@@ -11,21 +11,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
-try:
-    import google.generativeai as genai
-
-    GOOGLE_AVAILABLE = True
-except ImportError:
-    GOOGLE_AVAILABLE = False
-    print("Warning: google-generativeai not available", file=sys.stderr)
-
-try:
-    import instructor
-    from pydantic import BaseModel, Field
-
-    INSTRUCTOR_AVAILABLE = True
-except ImportError:
-    INSTRUCTOR_AVAILABLE = False
+import google.generativeai as genai
+from pydantic import BaseModel, Field
 
 
 class RequirementType(str, Enum):
@@ -51,25 +38,22 @@ class FormalRequirement:
     confidence: float = 0.0
 
 
-# Pydantic models for structured output (if instructor available)
-if INSTRUCTOR_AVAILABLE:
+class ACSLSpec(BaseModel):
+    """ACSL specification from LLM"""
 
-    class ACSLSpec(BaseModel):
-        """ACSL specification from LLM"""
-
-        requirement_type: str = Field(description="Type of requirement")
-        natural_language: str = Field(description="Original NL requirement")
-        precondition: Optional[str] = Field(
-            default=None, description="ACSL precondition (requires clause)"
-        )
-        postcondition: Optional[str] = Field(
-            default=None, description="ACSL postcondition (ensures clause)"
-        )
-        assertion: Optional[str] = Field(default=None, description="ACSL assertion")
-        function_name: Optional[str] = Field(
-            default=None, description="Function this applies to"
-        )
-        confidence: float = Field(default=0.8, description="Confidence score 0-1")
+    requirement_type: str = Field(description="Type of requirement")
+    natural_language: str = Field(description="Original NL requirement")
+    precondition: Optional[str] = Field(
+        default=None, description="ACSL precondition (requires clause)"
+    )
+    postcondition: Optional[str] = Field(
+        default=None, description="ACSL postcondition (ensures clause)"
+    )
+    assertion: Optional[str] = Field(default=None, description="ACSL assertion")
+    function_name: Optional[str] = Field(
+        default=None, description="Function this applies to"
+    )
+    confidence: float = Field(default=0.8, description="Confidence score 0-1")
 
 
 ACSL_PROMPT_TEMPLATE = """You are a formal verification expert specializing in ACSL (ANSI/ISO C Specification Language).
@@ -115,57 +99,6 @@ Now convert the requirement above.
 """
 
 
-def convert_nl_to_acsl_anthropic(
-    requirement: str,
-    function_name: Optional[str] = None,
-    variables: Optional[list[str]] = None,
-    api_key: Optional[str] = None,
-) -> FormalRequirement:
-    """Convert using Anthropic Claude"""
-    if not ANTHROPIC_AVAILABLE:
-        return mock_conversion(requirement, function_name)
-
-    client = Anthropic(api_key=api_key)
-
-    prompt = ACSL_PROMPT_TEMPLATE.format(
-        requirement=requirement,
-        function_name=function_name or "unknown",
-        variables=", ".join(variables) if variables else "unknown",
-    )
-
-    message = client.messages.create(
-        model="claude-sonnet-4-20250514",
-        max_tokens=1024,
-        messages=[{"role": "user", "content": prompt}],
-    )
-
-    # Parse JSON response
-    response_text = message.content[0].text
-    # Strip markdown code blocks if present
-    response_text = response_text.strip()
-    if response_text.startswith("```json"):
-        response_text = response_text[7:]
-    if response_text.startswith("```"):
-        response_text = response_text[3:]
-    if response_text.endswith("```"):
-        response_text = response_text[:-3]
-
-    data = json.loads(response_text.strip())
-
-    return FormalRequirement(
-        requirement_id=f"req_{hash(requirement) % 10000}",
-        natural_language=requirement,
-        property_type=RequirementType(
-            data.get("requirement_type", "functional_correctness")
-        ),
-        acsl_precondition=data.get("precondition"),
-        acsl_postcondition=data.get("postcondition"),
-        acsl_assertion=data.get("assertion"),
-        applies_to_function=data.get("function_name"),
-        confidence=data.get("confidence", 0.8),
-    )
-
-
 def convert_nl_to_acsl_google(
     requirement: str,
     function_name: Optional[str] = None,
@@ -173,9 +106,6 @@ def convert_nl_to_acsl_google(
     api_key: Optional[str] = None,
 ) -> FormalRequirement:
     """Convert using Google Gemini"""
-    if not GOOGLE_AVAILABLE:
-        return mock_conversion(requirement, function_name)
-
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel("gemini-2.5-flash")
 
@@ -316,7 +246,7 @@ def main():
     variables = args.variables.split(",") if args.variables else None
 
     # Convert based on provider
-    if args.provider == "google" and GOOGLE_AVAILABLE:
+    if args.provider == "google":
         req = convert_nl_to_acsl_google(
             args.requirement, args.function, variables, args.api_key
         )

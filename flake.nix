@@ -23,26 +23,6 @@
           config.allowBroken = true; # For KLEE and other broken packages
         };
 
-        # Custom build of KLEE (if not in nixpkgs or needs specific version)
-        # Note: KLEE is currently marked as broken in nixpkgs, uncomment if needed
-        # klee =
-        #   pkgs.klee or (pkgs.stdenv.mkDerivation rec {
-        #     pname = "klee";
-        #     version = "3.1";
-        #     src = pkgs.fetchFromGitHub {
-        #       owner = "klee";
-        #       repo = "klee";
-        #       rev = "v${version}";
-        #       sha256 = "sha256-PLACEHOLDER"; # Replace with actual hash
-        #     };
-        #     # Add build dependencies as needed
-        #     buildInputs = with pkgs; [
-        #       llvm
-        #       cmake
-        #       z3
-        #     ];
-        #   });
-
       in
       {
         devShells.default = pkgs.mkShell {
@@ -62,6 +42,31 @@
             bear # Generate compile_commands.json
             uv
 
+            # Text Processing
+            (buildPythonPackage rec {
+              pname = "contractions";
+              version = "0.1.73";
+              src = fetchPypi {
+                inherit pname version;
+                sha256 = "sha256-PLACEHOLDER"; # Replace with actual
+              };
+              propagatedBuildInputs = [ textwrap3 ];
+            })
+            # Diagramming
+            graphviz
+
+            # Data Processing
+            pandas
+            numpy
+            xlrd
+            openpyxl
+
+            # Testing
+            pytest
+            black
+            mypy
+            ipython
+            jupyter
             # ============================================
             # FORMAL VERIFICATION - PRIMARY TOOLS
             # ============================================
