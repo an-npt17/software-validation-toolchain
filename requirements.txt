@@ -1,5 +1,6 @@
 anthropic
 openai
+google-generativeai
 pydantic
 instructor
 langchain

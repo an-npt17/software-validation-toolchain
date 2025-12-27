@@ -9,23 +9,15 @@ import json
 import sys
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional
-
-# Try to import LLM libraries (will work if in nix shell)
-try:
-    from anthropic import Anthropic
-
-    ANTHROPIC_AVAILABLE = True
-except ImportError:
-    ANTHROPIC_AVAILABLE = False
-    print("Warning: anthropic not available, using mock mode", file=sys.stderr)
+from typing import Optional
 
 try:
-    from openai import OpenAI
+    import google.generativeai as genai
 
-    OPENAI_AVAILABLE = True
+    GOOGLE_AVAILABLE = True
 except ImportError:
-    OPENAI_AVAILABLE = False
+    GOOGLE_AVAILABLE = False
+    print("Warning: google-generativeai not available", file=sys.stderr)
 
 try:
     import instructor
@@ -126,7 +118,7 @@ Now convert the requirement above.
 def convert_nl_to_acsl_anthropic(
     requirement: str,
     function_name: Optional[str] = None,
-    variables: Optional[List[str]] = None,
+    variables: Optional[list[str]] = None,
     api_key: Optional[str] = None,
 ) -> FormalRequirement:
     """Convert using Anthropic Claude"""
@@ -174,17 +166,18 @@ def convert_nl_to_acsl_anthropic(
     )
 
 
-def convert_nl_to_acsl_openai(
+def convert_nl_to_acsl_google(
     requirement: str,
     function_name: Optional[str] = None,
-    variables: Optional[List[str]] = None,
+    variables: Optional[list[str]] = None,
     api_key: Optional[str] = None,
 ) -> FormalRequirement:
-    """Convert using OpenAI with instructor for structured output"""
-    if not OPENAI_AVAILABLE or not INSTRUCTOR_AVAILABLE:
+    """Convert using Google Gemini"""
+    if not GOOGLE_AVAILABLE:
         return mock_conversion(requirement, function_name)
 
-    client = instructor.from_openai(OpenAI(api_key=api_key))
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     prompt = ACSL_PROMPT_TEMPLATE.format(
         requirement=requirement,
@@ -192,21 +185,30 @@ def convert_nl_to_acsl_openai(
         variables=", ".join(variables) if variables else "unknown",
     )
 
-    spec = client.chat.completions.create(
-        model="gpt-4",
-        response_model=ACSLSpec,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    response = model.generate_content(prompt)
+    response_text = response.text.strip()
+
+    # Strip markdown code blocks if present
+    if response_text.startswith("```json"):
+        response_text = response_text[7:]
+    if response_text.startswith("```"):
+        response_text = response_text[3:]
+    if response_text.endswith("```"):
+        response_text = response_text[:-3]
+
+    data = json.loads(response_text.strip())
 
     return FormalRequirement(
         requirement_id=f"req_{hash(requirement) % 10000}",
         natural_language=requirement,
-        property_type=RequirementType(spec.requirement_type),
-        acsl_precondition=spec.precondition,
-        acsl_postcondition=spec.postcondition,
-        acsl_assertion=spec.assertion,
-        applies_to_function=spec.function_name,
-        confidence=spec.confidence,
+        property_type=RequirementType(
+            data.get("requirement_type", "functional_correctness")
+        ),
+        acsl_precondition=data.get("precondition"),
+        acsl_postcondition=data.get("postcondition"),
+        acsl_assertion=data.get("assertion"),
+        applies_to_function=data.get("function_name"),
+        confidence=data.get("confidence", 0.8),
     )
 
 
@@ -294,14 +296,14 @@ def main():
     )
     parser.add_argument(
         "--provider",
-        choices=["anthropic", "openai", "mock"],
-        default="mock",
-        help="LLM provider to use (default: mock)",
+        choices=["anthropic", "openai", "google", "mock"],
+        default="google",
+        help="LLM provider to use (default: google)",
     )
     parser.add_argument(
         "--api-key",
         type=str,
-        help="API key for LLM provider (or set ANTHROPIC_API_KEY/OPENAI_API_KEY env var)",
+        help="API key for LLM provider (or set GOOGLE_API_KEY/ANTHROPIC_API_KEY/OPENAI_API_KEY env var)",
     )
     parser.add_argument("--output", type=str, help="Output file (default: stdout)")
     parser.add_argument(
@@ -314,12 +316,8 @@ def main():
     variables = args.variables.split(",") if args.variables else None
 
     # Convert based on provider
-    if args.provider == "anthropic" and ANTHROPIC_AVAILABLE:
-        req = convert_nl_to_acsl_anthropic(
-            args.requirement, args.function, variables, args.api_key
-        )
-    elif args.provider == "openai" and OPENAI_AVAILABLE:
-        req = convert_nl_to_acsl_openai(
+    if args.provider == "google" and GOOGLE_AVAILABLE:
+        req = convert_nl_to_acsl_google(
             args.requirement, args.function, variables, args.api_key
         )
     else:
