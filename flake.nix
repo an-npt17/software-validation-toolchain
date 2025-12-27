@@ -20,44 +20,28 @@
         pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true; # For some tools if needed
+          config.allowBroken = true; # For KLEE and other broken packages
         };
 
-        # Python environment for LLM integration
-        pythonEnv = pkgs.python3.withPackages (
-          ps: with ps; [
-            anthropic
-            openai
-            pydantic
-            instructor
-            langchain
-            langchain-openai
-            spacy
-            nltk
-            requests
-            pytest
-            black
-            mypy
-          ]
-        );
-
         # Custom build of KLEE (if not in nixpkgs or needs specific version)
-        klee =
-          pkgs.klee or (pkgs.stdenv.mkDerivation rec {
-            pname = "klee";
-            version = "3.1";
-            src = pkgs.fetchFromGitHub {
-              owner = "klee";
-              repo = "klee";
-              rev = "v${version}";
-              sha256 = "sha256-PLACEHOLDER"; # Replace with actual hash
-            };
-            # Add build dependencies as needed
-            buildInputs = with pkgs; [
-              llvm
-              cmake
-              z3
-            ];
-          });
+        # Note: KLEE is currently marked as broken in nixpkgs, uncomment if needed
+        # klee =
+        #   pkgs.klee or (pkgs.stdenv.mkDerivation rec {
+        #     pname = "klee";
+        #     version = "3.1";
+        #     src = pkgs.fetchFromGitHub {
+        #       owner = "klee";
+        #       repo = "klee";
+        #       rev = "v${version}";
+        #       sha256 = "sha256-PLACEHOLDER"; # Replace with actual hash
+        #     };
+        #     # Add build dependencies as needed
+        #     buildInputs = with pkgs; [
+        #       llvm
+        #       cmake
+        #       z3
+        #     ];
+        #   });
 
       in
       {
@@ -69,8 +53,8 @@
             # CORE COMPILERS & BUILD TOOLS
             # ============================================
             gcc13
-            clang_17
-            llvm_17
+            clang
+            llvm
             cmake
             gnumake
             ninja
@@ -82,7 +66,7 @@
             # ============================================
 
             # Frama-C - Main static analyzer for C
-            frama-c
+            framac
 
             # Why3 - Multi-prover verification platform
             why3
@@ -157,10 +141,10 @@
             cppcheck
 
             # Clang-tidy - Clang-based linter
-            clang-tools_17
+            clang-tools
 
             # Infer - Facebook static analyzer
-            infer
+            # infer # Not available in nixpkgs-unstable
 
             # ============================================
             # PARSERS & SYNTAX TOOLS
@@ -186,12 +170,6 @@
 
             graphviz # For visualization
             doxygen # Documentation
-
-            # ============================================
-            # PYTHON ENVIRONMENT (for LLM integration)
-            # ============================================
-
-            pythonEnv
 
             # ============================================
             # UTILITIES
@@ -279,11 +257,11 @@
             export WHY3_CONFIG_DIR="$HOME/.why3"
             mkdir -p "$WHY3_CONFIG_DIR"
 
-            # KLEE environment
-            export KLEE_RUNTIME_LIBRARY_PATH="${klee}/lib/klee/runtime"
+            # KLEE environment (uncomment if using custom KLEE build)
+            # export KLEE_RUNTIME_LIBRARY_PATH="${pkgs.klee}/lib/klee/runtime"
 
             # Frama-C plugin path
-            export FRAMAC_PLUGIN="${pkgs.frama-c}/lib/frama-c/plugins"
+            export FRAMAC_PLUGIN="${pkgs.framac}/lib/frama-c/plugins"
 
             # Add custom scripts to PATH
             export PATH="$PWD/scripts:$PATH"
@@ -301,7 +279,7 @@
           '';
 
           # Environment variables
-          FRAMA_C_SHARE = "${pkgs.frama-c}/share/frama-c";
+          FRAMA_C_SHARE = "${pkgs.framac}/share/frama-c";
           WHY3_DATADIR = "${pkgs.why3}/share/why3";
           Z3_PATH = "${pkgs.z3}/bin/z3";
 
