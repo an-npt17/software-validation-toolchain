@@ -60,6 +60,7 @@
             ninja
             pkg-config
             bear # Generate compile_commands.json
+            uv
 
             # ============================================
             # FORMAL VERIFICATION - PRIMARY TOOLS
@@ -228,7 +229,7 @@
             echo ""
             echo "Python Environment:"
             echo "  - Python:       $(python --version)"
-            echo "  - Anthropic SDK, OpenAI SDK, LangChain available"
+            echo "  - Google Gemini, Anthropic SDK, OpenAI SDK, LangChain available"
             echo ""
             echo "=================================================="
             echo ""
@@ -246,6 +247,14 @@
             echo "  python llm_to_acsl.py           # Convert NL to ACSL"
             echo ""
             echo "=================================================="
+
+            # Load environment variables from .env file if it exists
+            if [ -f .env ]; then
+              echo "Loading environment variables from .env file..."
+              set -a
+              source .env
+              set +a
+            fi
 
             # Set up environment variables
             export CC=clang
@@ -337,6 +346,9 @@
             #!/usr/bin/env bash
             python scripts/llm_to_acsl.py "$@"
           '';
+          
+          # Set default package
+          default = self.packages.${system}.nl-to-acsl;
         };
 
         # Apps for easy access
