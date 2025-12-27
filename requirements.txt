@@ -1,0 +1,12 @@
+anthropic
+openai
+pydantic
+instructor
+langchain
+langchain-openai
+spacy
+nltk
+requests
+pytest
+black
+mypy
