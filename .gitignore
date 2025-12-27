@@ -227,3 +227,5 @@ ruff_check.json
 
 # conflict files
 *.orig
+
+result
