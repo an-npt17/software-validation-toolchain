@@ -30,6 +30,7 @@ The shell hook will display all available tools. You should see:
 This toolchain includes:
 
 **Specification & Modeling:**
+
 - PlantUML - UML diagram generation
 - SPOT - LTL formula manipulation
 - NuSMV - Symbolic model checker (CTL/LTL)
@@ -37,17 +38,20 @@ This toolchain includes:
 - Alloy - Relational model checker
 
 **Static Verification:**
+
 - Frama-C - Deductive verification for C
 - CBMC - Bounded model checker
 - Why3 - Multi-prover platform
 - Z3, CVC5, Alt-Ergo - SMT solvers
 
 **Dynamic Analysis:**
+
 - KLEE - Symbolic execution
 - AFL++ - Coverage-guided fuzzing
 - Valgrind - Memory error detection
 
 **NL to Formal Specs:**
+
 - nl2ltl - Natural language to LTL
 - nl-to-acsl - Natural language to ACSL (LLM-powered)
 
@@ -110,6 +114,7 @@ plantuml -tsvg diagram.puml
 ```
 
 Common diagram types:
+
 - Sequence diagrams (`@startuml ... @enduml`)
 - Class diagrams
 - State diagrams
@@ -124,13 +129,16 @@ You can use the LLM tools to convert natural language to PlantUML:
 # Example: Generate PlantUML from requirements
 python << EOF
 import anthropic
+
 client = anthropic.Anthropic()
 response = client.messages.create(
     model="claude-3-5-sonnet-20241022",
-    messages=[{
-        "role": "user",
-        "content": "Create a PlantUML sequence diagram for user login with authentication"
-    }]
+    messages=[
+        {
+            "role": "user",
+            "content": "Create a PlantUML sequence diagram for user login with authentication",
+        }
+    ],
 )
 print(response.content[0].text)
 EOF
@@ -157,6 +165,7 @@ randltl -n 5 a b c
 ```
 
 Common LTL operators:
+
 - `G` (Globally/Always)
 - `F` (Finally/Eventually)
 - `X` (Next)
@@ -238,30 +247,17 @@ nl-to-acsl "Pointer must not be null" --format json
 nl-to-acsl "Division by zero must be prevented" --output specs/division.acsl
 ```
 
-### Using Claude (Anthropic)
+### Using Gemini (default gemini-2.5-flash)
 
 ```bash
 # Set API key
-export ANTHROPIC_API_KEY="your-key-here"
+export GOOGLE_API_KEY="your-key-here"
 
 # Convert with Claude
 nl-to-acsl "The string copy must not overflow the destination buffer" \
-  --provider anthropic \
+  --provider gemini \
   --function safe_string_copy \
   --variables "dest,src,dest_size"
-```
-
-### Using OpenAI
-
-```bash
-# Set API key
-export OPENAI_API_KEY="your-key-here"
-
-# Convert with GPT-4
-nl-to-acsl "Array access must be bounds-checked" \
-  --provider openai \
-  --function get_element \
-  --variables "array,size,index"
 ```
 
 ## Verification Workflows

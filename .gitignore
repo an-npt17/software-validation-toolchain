@@ -230,3 +230,6 @@ ruff_check.json
 
 result/
 fuzz_target*
+fuzz_input/
+artifacts/
+specs/
