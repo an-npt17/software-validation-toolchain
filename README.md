@@ -25,7 +25,33 @@ The shell hook will display all available tools. You should see:
 - AFL++
 - Python with LLM libraries
 
-### 3. Test with Example Code
+### 3. Available Tool Categories
+
+This toolchain includes:
+
+**Specification & Modeling:**
+- PlantUML - UML diagram generation
+- SPOT - LTL formula manipulation
+- NuSMV - Symbolic model checker (CTL/LTL)
+- SPIN - Model checker for concurrent systems
+- Alloy - Relational model checker
+
+**Static Verification:**
+- Frama-C - Deductive verification for C
+- CBMC - Bounded model checker
+- Why3 - Multi-prover platform
+- Z3, CVC5, Alt-Ergo - SMT solvers
+
+**Dynamic Analysis:**
+- KLEE - Symbolic execution
+- AFL++ - Coverage-guided fuzzing
+- Valgrind - Memory error detection
+
+**NL to Formal Specs:**
+- nl2ltl - Natural language to LTL
+- nl-to-acsl - Natural language to ACSL (LLM-powered)
+
+### 4. Test with Example Code
 
 ```bash
 # Copy example to your workspace
@@ -56,6 +82,142 @@ klee --max-time=60s --output-dir=results/klee-out src/example.bc
 ├── tests/                 # Test files
 ├── results/               # Verification results
 └── artifacts/             # Build artifacts
+```
+
+## UML Diagram Generation
+
+### PlantUML - Text to UML
+
+Create UML diagrams from simple text descriptions:
+
+```bash
+# Create a sequence diagram
+cat > diagram.puml <<EOF
+@startuml
+actor User
+User -> System: Request
+System -> Database: Query
+Database --> System: Result
+System --> User: Response
+@enduml
+EOF
+
+# Generate PNG
+plantuml diagram.puml
+
+# Generate SVG
+plantuml -tsvg diagram.puml
+```
+
+Common diagram types:
+- Sequence diagrams (`@startuml ... @enduml`)
+- Class diagrams
+- State diagrams
+- Activity diagrams
+- Use case diagrams
+
+### Using LLMs for UML Generation
+
+You can use the LLM tools to convert natural language to PlantUML:
+
+```python
+# Example: Generate PlantUML from requirements
+python << EOF
+import anthropic
+client = anthropic.Anthropic()
+response = client.messages.create(
+    model="claude-3-5-sonnet-20241022",
+    messages=[{
+        "role": "user",
+        "content": "Create a PlantUML sequence diagram for user login with authentication"
+    }]
+)
+print(response.content[0].text)
+EOF
+```
+
+## Temporal Logic & Model Checking
+
+### SPOT - LTL Formula Tools
+
+SPOT provides tools for LTL (Linear Temporal Logic) formulas:
+
+```bash
+# Convert LTL to Büchi automaton
+ltl2tgba 'G(request -> F response)'
+
+# Check formula satisfiability
+ltlfilt --sat-minimize 'G(p -> F q)'
+
+# Simplify LTL formula
+ltlfilt --simplify 'G F p & G F q'
+
+# Random LTL generation (for testing)
+randltl -n 5 a b c
+```
+
+Common LTL operators:
+- `G` (Globally/Always)
+- `F` (Finally/Eventually)
+- `X` (Next)
+- `U` (Until)
+- `R` (Release)
+
+### NuSMV - Symbolic Model Checker
+
+NuSMV checks CTL/LTL properties on finite-state systems:
+
+```bash
+# Create a simple model
+cat > traffic_light.smv <<EOF
+MODULE main
+VAR
+  state: {red, yellow, green};
+ASSIGN
+  init(state) := red;
+  next(state) :=
+    case
+      state = red : green;
+      state = green : yellow;
+      state = yellow : red;
+    esac;
+LTLSPEC G(state = red -> F state = green)
+EOF
+
+# Run model checker
+NuSMV traffic_light.smv
+```
+
+### SPIN - LTL Model Checking
+
+SPIN verifies concurrent systems using Promela:
+
+```bash
+# Create Promela model
+cat > mutex.pml <<EOF
+bool lock = false;
+active proctype P1() {
+  do
+  :: atomic { !lock -> lock = true }
+     /* critical section */
+     lock = false
+  od
+}
+active proctype P2() {
+  do
+  :: atomic { !lock -> lock = true }
+     /* critical section */
+     lock = false
+  od
+}
+EOF
+
+# Generate verifier
+spin -a mutex.pml
+
+# Compile and run
+gcc -o pan pan.c
+./pan
 ```
 
 ## Natural Language to ACSL Conversion
@@ -399,38 +561,68 @@ To add more tools or improve the configuration:
 1. Add examples to `src/`
 1. Document in this README
 
-# Complete 5 level pipelines for testing:
+# Complete Verification Pipeline
 
 ```
-LEVEL 1: Natural Language Requirements (NEW!)
-├─ Tool: analyze-requirements
-├─ Input: User stories, use cases, plain English
-├─ Output: Structured requirements with quality metrics
-└─ Features: Ambiguity detection, completeness checking
+LEVEL 1: Natural Language Requirements
+├─ Tools: LLMs (Claude, GPT-4), nl2ltl
+├─ Input: User stories, plain English specifications
+├─ Output: Structured requirements, LTL formulas
+└─ Features: NL to formal logic translation
 
-LEVEL 2: UML/Behavioral Models (NEW!)
-├─ Tools: PlantUML, Mermaid, TLA+, Alloy
-├─ Input: Structured requirements
-├─ Output: State diagrams, sequence diagrams, formal models
-└─ Features: Visual modeling, model checking
+LEVEL 2: UML & Behavioral Models
+├─ Tools: PlantUML, SPIN, NuSMV, Alloy
+├─ Input: Requirements, LTL formulas
+├─ Output: UML diagrams, Promela models, state machines
+└─ Features: Visual modeling, temporal logic model checking
 
-LEVEL 3: Formal Specifications (ENHANCED)
-├─ Tool: nl-to-acsl (now with model input)
+LEVEL 3: Formal Specifications
+├─ Tools: nl-to-acsl, SPOT, SPIN
 ├─ Input: Models + requirements
-├─ Output: ACSL contracts, TLA+ specs
-└─ Features: LLM-assisted translation
+├─ Output: ACSL contracts, LTL properties
+└─ Features: LLM-assisted specification generation
 
-LEVEL 4: Code Verification (EXISTING)
-├─ Tools: Frama-C, Why3, CBMC
-├─ Input: C/C++ code with ACSL
+LEVEL 4: Static Code Verification
+├─ Tools: Frama-C, Why3, CBMC, Z3, CVC5
+├─ Input: C/C++ code with ACSL annotations
 ├─ Output: Proof obligations, verification results
-└─ Features: Mathematical proofs
+└─ Features: Deductive verification, SMT solving
 
-LEVEL 5: Dynamic Validation (EXISTING)
+LEVEL 5: Dynamic Testing & Validation
 ├─ Tools: KLEE, AFL++, Valgrind
 ├─ Input: Compiled code
-├─ Output: Test cases, bug reports
-└─ Features: Concrete execution paths
+├─ Output: Test cases, bug reports, crash inputs
+└─ Features: Symbolic execution, fuzzing, memory analysis
+```
+
+## Workflow Examples
+
+### Full Pipeline: Requirements → Verification
+
+```bash
+# 1. Convert natural language to LTL
+python nl2ltl/main.py "The system must always respond within 5 seconds"
+
+# 2. Create UML sequence diagram (using LLM or manual)
+plantuml system_behavior.puml
+
+# 3. Model check with SPIN/NuSMV
+spin -a system_model.pml
+gcc -o pan pan.c && ./pan
+
+# 4. Generate ACSL specifications
+nl-to-acsl "Buffer overflow must be prevented" --output specs/safety.acsl
+
+# 5. Verify C code with Frama-C
+frama-c -wp src/implementation.c -wp-prover z3
+
+# 6. Symbolic execution
+clang -emit-llvm -c -g src/implementation.c -o results/impl.bc
+klee --max-time=60s results/impl.bc
+
+# 7. Fuzz testing
+afl-clang-fast src/implementation.c -o fuzz_target
+afl-fuzz -i inputs -o findings -- ./fuzz_target @@
 ```
 
 ## License

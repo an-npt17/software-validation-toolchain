@@ -127,14 +127,30 @@
             # SPECIFICATION & MODELING
             # ============================================
 
-            # SPIN - Model checker
+            # SPIN - Model checker for LTL
             spin
+
+            # SPOT - LTL/CTL model checker and formula tools
+            spot
+
+            # NuSMV - Symbolic model checker for LTL/CTL
+            nusmv
 
             # TLA+ tools (if you need them)
             # tlaplus # Uncomment if needed
 
             # Alloy - Relational model checker
             alloy6
+
+            # ============================================
+            # UML & DIAGRAM GENERATION
+            # ============================================
+
+            # PlantUML - UML diagram generator
+            plantuml
+
+            # Mermaid CLI - Markdown-based diagrams
+            # mermaid-cli # May need manual install via npm
 
             # ============================================
             # ANALYSIS UTILITIES
@@ -232,6 +248,15 @@
             echo "Dynamic Analysis:"
             echo "  - Valgrind:     $(valgrind --version | head -1)"
             echo ""
+            echo "Temporal Logic & Model Checking:"
+            echo "  - SPIN:         $(spin -V 2>&1 | head -1 || echo 'Available')"
+            echo "  - SPOT:         $(ltl2tgba --version 2>&1 | head -1 || echo 'Available')"
+            echo "  - NuSMV:        $(NuSMV -version 2>&1 | head -1 || echo 'Available')"
+            echo "  - Alloy:        Alloy Analyzer available"
+            echo ""
+            echo "UML & Diagrams:"
+            echo "  - PlantUML:     $(plantuml -version 2>&1 | head -1 || echo 'Available')"
+            echo ""
             echo "Python Environment:"
             echo "  - Python:       $(python --version)"
             echo "  - Google Gemini, Anthropic SDK, OpenAI SDK, LangChain available"
@@ -242,14 +267,17 @@
             echo "  frama-c -wp your_file.c          # Weakest precondition"
             echo "  cbmc your_file.c --bounds-check  # Bounded model check"
             echo "  klee your_file.bc                # Symbolic execution"
-            echo "  afl-cc your_file.c -o binary     # Compile for fuzzing"
-            echo "  why3 prove your_file.why         # Multi-prover verification"
+            echo "  spin -a model.pml                # Generate SPIN verifier"
+            echo "  ltl2tgba 'G(p -> F q)'           # LTL to automaton (SPOT)"
+            echo "  NuSMV model.smv                  # Symbolic model check"
+            echo "  plantuml diagram.puml            # Generate UML diagram"
             echo ""
             echo "Setup compilation database:"
             echo "  bear -- make                     # Generate compile_commands.json"
             echo ""
             echo "Python LLM Integration:"
-            echo "  python llm_to_acsl.py           # Convert NL to ACSL"
+            echo "  python llm_to_acsl.py            # Convert NL to ACSL"
+            echo "  python nl2ltl/main.py            # Convert NL to LTL"
             echo ""
             echo "=================================================="
 
