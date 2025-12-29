@@ -54,6 +54,7 @@
 
             # Why3 - Multi-prover verification platform
             why3
+            why3find
 
             # Alt-Ergo - SMT solver for Why3
             alt-ergo
@@ -62,7 +63,10 @@
             z3
 
             # CVC4/CVC5 - SMT solver
+            cvc4
             cvc5
+            mermaid-cli
+            mermaid-filter
 
             # CBMC - Bounded model checker
             cbmc
