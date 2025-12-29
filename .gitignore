@@ -233,3 +233,4 @@ fuzz_target*
 fuzz_input/
 artifacts/
 specs/
+benchmarks/*

@@ -319,10 +319,57 @@ docs:
 	@doxygen Doxyfile 2>/dev/null || echo "Doxyfile not found"
 	@echo "Documentation generated"
 
+# ============================================
+# Benchmark Suite
+# ============================================
+
+benchmark-quick:
+	@echo "==> Running benchmarks (quick - Frama-C and CBMC only)..."
+	@python3 scripts/run_benchmarks.py \
+		--benchmark-dir benchmarks \
+		--results-dir results/benchmark-run \
+		--timeout 30 \
+		--tools framac cbmc \
+		--parallel 4
+
+benchmark-full:
+	@echo "==> Running full benchmark suite (all tools)..."
+	@python3 scripts/run_benchmarks.py \
+		--benchmark-dir benchmarks \
+		--results-dir results/benchmark-run \
+		--timeout 60 \
+		--tools framac cbmc klee \
+		--parallel 4
+
+benchmark-array:
+	@echo "==> Running array benchmarks only..."
+	@python3 scripts/run_benchmarks.py \
+		--benchmark-dir benchmarks/array-cav19 \
+		--results-dir results/benchmark-array \
+		--timeout 30 \
+		--tools framac cbmc
+
+benchmark-float:
+	@echo "==> Running float benchmarks only..."
+	@python3 scripts/run_benchmarks.py \
+		--benchmark-dir benchmarks/float-newlib \
+		--results-dir results/benchmark-float \
+		--timeout 60 \
+		--tools framac cbmc
+
+benchmark-report:
+	@echo "==> Generating benchmark report..."
+	@if [ -f results/benchmark-run/results.json ]; then \
+		python3 scripts/generate_report.py results/benchmark-run/results.json; \
+	else \
+		echo "No results found. Run 'make benchmark-quick' first."; \
+	fi
+
 .PHONY: help setup verify-all verify-frama verify-eva verify-rte \
         verify-cbmc verify-cbmc-deep verify-klee klee-stats klee-replay \
         analyze-all analyze-cppcheck analyze-clang-tidy analyze-infer \
         fuzz-setup fuzz fuzz-asan valgrind \
         nl-to-acsl generate-specs \
         report report-json compile-db list-targets \
-        clean clean-all ci ci-check docs
+        clean clean-all ci ci-check docs \
+        benchmark-quick benchmark-full benchmark-array benchmark-float benchmark-report

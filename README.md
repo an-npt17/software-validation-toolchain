@@ -8,6 +8,25 @@ Complete environment for formal verification of C/C++ programs with **AI-powered
 - **Complete Verification Suite**: Frama-C, CBMC, KLEE, AFL++, and more
 - **Multi-Level Analysis**: Static verification, symbolic execution, fuzzing, model checking
 - **Reproducible Environment**: Nix-based setup with all dependencies managed
+- **Benchmark Testing**: validate the toolchain
+
+## 🧪 Testing the Toolchain
+
+The project includes to test the toolchain:
+
+```bash
+# Quick test (array benchmarks)
+make benchmark-array
+
+# Full test (all benchmarks)
+make benchmark-quick
+
+# Generate HTML report
+make benchmark-report
+firefox results/benchmark-run/report.html
+```
+
+See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for detailed testing guide.
 
 ## Quick Start
 
@@ -451,6 +470,7 @@ verify:
 ```python
 #!/usr/bin/env python3
 """Batch convert requirements to ACSL using Gemini"""
+
 import sys
 
 sys.path.append("scripts")
@@ -476,6 +496,7 @@ for req in requirements:
 ```python
 #!/usr/bin/env python3
 """Interactive ACSL specification builder using Gemini"""
+
 import os
 from llm_to_acsl import convert_nl_to_acsl_google, mock_conversion
 
@@ -483,7 +504,9 @@ from llm_to_acsl import convert_nl_to_acsl_google, mock_conversion
 use_gemini = bool(os.getenv("GOOGLE_API_KEY"))
 
 print("Interactive ACSL Generator")
-print(f"Mode: {'Gemini' if use_gemini else 'Mock (set GOOGLE_API_KEY for real conversion)'}\n")
+print(
+    f"Mode: {'Gemini' if use_gemini else 'Mock (set GOOGLE_API_KEY for real conversion)'}\n"
+)
 
 while True:
     req = input("Enter requirement (or 'quit'): ")
@@ -686,10 +709,10 @@ This toolchain configuration is public domain. Individual tools have their own l
 This toolchain uses **Google Gemini 2.5 Flash** as the default AI model for several reasons:
 
 1. **Fast & Efficient**: Gemini 2.5 Flash is optimized for low latency and high throughput
-2. **Free Tier**: Generous free tier at https://ai.google.dev (60 requests/minute)
-3. **Strong Reasoning**: Excellent performance on code understanding and formal logic tasks
-4. **Structured Output**: Reliable JSON generation for ACSL/LTL specifications
-5. **Long Context**: Can handle large prompts with multiple examples
+1. **Free Tier**: Generous free tier at https://ai.google.dev (60 requests/minute)
+1. **Strong Reasoning**: Excellent performance on code understanding and formal logic tasks
+1. **Structured Output**: Reliable JSON generation for ACSL/LTL specifications
+1. **Long Context**: Can handle large prompts with multiple examples
 
 ### Gemini API Setup
 
@@ -724,4 +747,3 @@ Based on our testing:
 | Gemini 1.5 Pro | ⚡⚡ Medium | 💰💰 Low cost | 97% | 95% |
 
 Gemini 2.5 Flash provides the best balance of speed, cost, and accuracy for most use cases.
-
