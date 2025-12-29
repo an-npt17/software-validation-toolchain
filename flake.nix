@@ -42,31 +42,9 @@
             bear # Generate compile_commands.json
             uv
 
-            # Text Processing
-            (buildPythonPackage rec {
-              pname = "contractions";
-              version = "0.1.73";
-              src = fetchPypi {
-                inherit pname version;
-                sha256 = "sha256-PLACEHOLDER"; # Replace with actual
-              };
-              propagatedBuildInputs = [ textwrap3 ];
-            })
             # Diagramming
             graphviz
 
-            # Data Processing
-            pandas
-            numpy
-            xlrd
-            openpyxl
-
-            # Testing
-            pytest
-            black
-            mypy
-            ipython
-            jupyter
             # ============================================
             # FORMAL VERIFICATION - PRIMARY TOOLS
             # ============================================
