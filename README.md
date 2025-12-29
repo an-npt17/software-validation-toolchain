@@ -399,6 +399,40 @@ To add more tools or improve the configuration:
 1. Add examples to `src/`
 1. Document in this README
 
+# Complete 5 level pipelines for testing:
+
+```
+LEVEL 1: Natural Language Requirements (NEW!)
+├─ Tool: analyze-requirements
+├─ Input: User stories, use cases, plain English
+├─ Output: Structured requirements with quality metrics
+└─ Features: Ambiguity detection, completeness checking
+
+LEVEL 2: UML/Behavioral Models (NEW!)
+├─ Tools: PlantUML, Mermaid, TLA+, Alloy
+├─ Input: Structured requirements
+├─ Output: State diagrams, sequence diagrams, formal models
+└─ Features: Visual modeling, model checking
+
+LEVEL 3: Formal Specifications (ENHANCED)
+├─ Tool: nl-to-acsl (now with model input)
+├─ Input: Models + requirements
+├─ Output: ACSL contracts, TLA+ specs
+└─ Features: LLM-assisted translation
+
+LEVEL 4: Code Verification (EXISTING)
+├─ Tools: Frama-C, Why3, CBMC
+├─ Input: C/C++ code with ACSL
+├─ Output: Proof obligations, verification results
+└─ Features: Mathematical proofs
+
+LEVEL 5: Dynamic Validation (EXISTING)
+├─ Tools: KLEE, AFL++, Valgrind
+├─ Input: Compiled code
+├─ Output: Test cases, bug reports
+└─ Features: Concrete execution paths
+```
+
 ## License
 
 This toolchain configuration is public domain. Individual tools have their own licenses.

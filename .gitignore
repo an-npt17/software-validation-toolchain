@@ -229,3 +229,4 @@ ruff_check.json
 *.orig
 
 result/
+fuzz_target*
