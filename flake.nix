@@ -79,7 +79,7 @@
             # ============================================
 
             # KLEE - LLVM-based symbolic execution
-            klee
+            # klee # BUG: unusable, try docker
 
             # ============================================
             # FUZZING & DYNAMIC ANALYSIS

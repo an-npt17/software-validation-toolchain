@@ -227,14 +227,14 @@ nl-to-acsl:
 	@echo "Interactive NL to ACSL converter"
 	@echo "Enter requirement (Ctrl+C to exit):"
 	@read -p "> " req; \
-	python3 scripts/llm_to_acsl.py "$$req" --function $(TARGET_NAME)
+	uv run scripts/llm_to_acsl.py "$$req" --function $(TARGET_NAME)
 
 generate-specs:
 	@echo "Generating ACSL specifications from requirements.txt..."
 	@mkdir -p specs
 	@while IFS= read -r line; do \
 		echo "Converting: $$line"; \
-		python3 scripts/llm_to_acsl.py "$$line" --output specs/generated.acsl --format acsl; \
+		uv run scripts/llm_to_acsl.py "$$line" --output specs/generated.acsl --format acsl; \
 	done < requirements.txt
 	@echo "✓ Specifications generated in specs/"
 
@@ -325,7 +325,7 @@ docs:
 
 benchmark-quick:
 	@echo "==> Running benchmarks (quick - Frama-C and CBMC only)..."
-	@python3 scripts/run_benchmarks.py \
+	@uv run scripts/run_benchmarks.py \
 		--benchmark-dir benchmarks \
 		--results-dir results/benchmark-run \
 		--timeout 30 \
@@ -334,7 +334,7 @@ benchmark-quick:
 
 benchmark-full:
 	@echo "==> Running full benchmark suite (all tools)..."
-	@python3 scripts/run_benchmarks.py \
+	@uv run scripts/run_benchmarks.py \
 		--benchmark-dir benchmarks \
 		--results-dir results/benchmark-run \
 		--timeout 60 \
@@ -343,7 +343,7 @@ benchmark-full:
 
 benchmark-array:
 	@echo "==> Running array benchmarks only..."
-	@python3 scripts/run_benchmarks.py \
+	@uv run scripts/run_benchmarks.py \
 		--benchmark-dir benchmarks/array-cav19 \
 		--results-dir results/benchmark-array \
 		--timeout 30 \
@@ -351,7 +351,7 @@ benchmark-array:
 
 benchmark-float:
 	@echo "==> Running float benchmarks only..."
-	@python3 scripts/run_benchmarks.py \
+	@uv run scripts/run_benchmarks.py \
 		--benchmark-dir benchmarks/float-newlib \
 		--results-dir results/benchmark-float \
 		--timeout 60 \
@@ -360,7 +360,7 @@ benchmark-float:
 benchmark-report:
 	@echo "==> Generating benchmark report..."
 	@if [ -f results/benchmark-run/results.json ]; then \
-		python3 scripts/generate_report.py results/benchmark-run/results.json; \
+		uv run scripts/generate_report.py results/benchmark-run/results.json; \
 	else \
 		echo "No results found. Run 'make benchmark-quick' first."; \
 	fi
