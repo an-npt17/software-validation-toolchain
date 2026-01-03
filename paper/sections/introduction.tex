@@ -1,0 +1,21 @@
+\chapter{Introduction}
+
+Software verification is critical for ensuring the correctness and safety of computer systems, particularly in safety-critical domains such as avionics, automotive, and medical devices. Traditional verification approaches face several challenges:
+
+\begin{itemize}
+	\item \textbf{Specification Gap}: Converting informal requirements into formal specifications requires expert knowledge
+	\item \textbf{Tool Fragmentation}: Different verification tools require different input formats and expertise
+	\item \textbf{Reproducibility}: Setting up verification environments with correct tool versions is complex
+	\item \textbf{Integration}: Combining static and dynamic analysis results is often manual
+\end{itemize}
+
+This paper presents a comprehensive software validation toolchain that addresses these challenges through:
+
+\begin{enumerate}
+	\item \textbf{AI-Powered Translation}: Using Google Gemini 2.5 Flash to automatically convert natural language requirements to formal specifications (ACSL, LTL)
+	\item \textbf{Multi-Level Verification}: Integrating 15+ verification tools across modeling, static analysis, and dynamic testing
+	\item \textbf{Reproducible Environment}: Nix-based package management ensuring consistent tool versions
+	\item \textbf{Automated Pipeline}: Makefile-driven workflows for complete verification automation
+\end{enumerate}
+
+The remainder of this paper is organized as follows: Section II discusses related work, Section III presents the system architecture, Section IV details the implementation, Section V presents evaluation results, and Section VI concludes with future directions.

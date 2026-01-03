@@ -1,0 +1,16 @@
+\chapter{Conclusion}
+
+This paper presented a comprehensive AI-powered formal verification toolchain that bridges the gap between natural language requirements and verified code. By integrating Google Gemini 2.5 Flash for automated specification generation with established verification tools (Frama-C, CBMC, KLEE, AFL++), we created an end-to-end verification pipeline accessible to both verification experts and developers.
+
+The toolchain's key contributions are:
+
+\begin{enumerate}
+	\item \textbf{AI-Powered Translation}: First integration of modern LLMs (Gemini) with formal verification for automated ACSL/LTL generation
+	\item \textbf{Multi-Level Verification}: Comprehensive pipeline from requirements to verified code across 5 levels
+	\item \textbf{Reproducible Environment}: Nix-based setup ensuring consistent verification results
+	\item \textbf{Automated Workflows}: Makefile-driven automation reducing manual effort
+\end{enumerate}
+
+Preliminary evaluation on benchmark suites demonstrates the feasibility of the approach, with CBMC achieving 100\% completion rate and Frama-C successfully verifying programs with appropriate annotations. The AI translation layer shows promise in reducing the specification burden, though further evaluation is needed.
+
+The toolchain is open-source and designed for extensibility, enabling researchers and practitioners to build upon this foundation. Future work will focus on enhancing AI capabilities (loop invariant generation, counterexample explanation) and broader industrial adoption.

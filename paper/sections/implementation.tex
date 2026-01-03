@@ -1,0 +1,101 @@
+\chapter{Implementation}
+
+\section{Natural Language to ACSL Conversion}
+
+The \texttt{nl-to-acsl} tool implements the conversion pipeline:
+
+\begin{lstlisting}[language=Python, caption=ACSL Generation Prompt Template]
+ACSL_PROMPT = """
+Convert natural language requirement
+to ACSL specification.
+
+Requirement: "{requirement}"
+Context: Function={function},
+         Variables={variables}
+
+Return JSON:
+{
+  "precondition": "/*@ requires ... */",
+  "postcondition": "/*@ ensures ... */",
+  "confidence": 0.95
+}
+"""
+\end{lstlisting}
+
+The tool supports:
+\begin{itemize}
+	\item Batch conversion of requirements
+	\item Function and variable context
+	\item Multiple output formats (JSON, plain ACSL)
+	\item Confidence scoring for human review
+\end{itemize}
+
+\section{Verification Workflow Automation}
+
+A comprehensive Makefile provides automated workflows:
+
+\begin{lstlisting}[language=bash, caption=Complete Verification Pipeline]
+make verify-all TARGET=src/example.c
+# Executes:
+# 1. Frama-C WP with multiple provers
+# 2. CBMC bounded model checking
+# 3. KLEE symbolic execution
+# 4. Generate unified report
+\end{lstlisting}
+
+Individual verification steps can also be run separately:
+
+\begin{itemize}
+	\item \texttt{make verify-frama}: Deductive verification
+	\item \texttt{make verify-cbmc}: Bounded model checking
+	\item \texttt{make verify-klee}: Symbolic execution
+	\item \texttt{make fuzz}: AFL++ fuzzing
+	\item \texttt{make valgrind}: Memory analysis
+\end{itemize}
+
+\section{Benchmark Testing Framework}
+
+A Python-based benchmark runner (\texttt{scripts/run\_benchmarks.py}) automates large-scale testing:
+
+\begin{itemize}
+	\item Reads benchmark suites (SV-COMP format)
+	\item Runs multiple tools in parallel
+	\item Collects results with timeouts
+	\item Generates HTML/Markdown reports
+	\item Compares against expected verdicts
+\end{itemize}
+
+\section{Technology Stack}
+
+Table \ref{tab:tools} summarizes the integrated tools:
+
+\begin{table}[htbp]
+	\caption{Integrated Verification Tools}
+	\label{tab:tools}
+	\centering
+	\begin{tabular}{@{}lll@{}}
+		\toprule
+		\textbf{Category} & \textbf{Tool}      & \textbf{Purpose}        \\
+		\midrule
+		AI Translation    & Gemini 2.5 Flash   & NL to ACSL/LTL          \\
+		                  & nl2ltl             & LTL generation          \\
+		\midrule
+		Modeling          & PlantUML           & UML diagrams            \\
+		                  & SPOT               & LTL manipulation        \\
+		                  & NuSMV              & CTL/LTL model checking  \\
+		                  & SPIN               & Promela verification    \\
+		\midrule
+		Static Analysis   & Frama-C            & Deductive verification  \\
+		                  & Why3               & Multi-prover platform   \\
+		                  & CBMC               & Bounded checking        \\
+		                  & Z3, CVC5, Alt-Ergo & SMT solvers             \\
+		\midrule
+		Dynamic Testing   & KLEE               & Symbolic execution      \\
+		                  & AFL++              & Fuzzing                 \\
+		                  & Valgrind           & Memory analysis         \\
+		\midrule
+		Infrastructure    & Nix                & Package management      \\
+		                  & LLVM/Clang         & Compiler infrastructure \\
+		\bottomrule
+	\end{tabular}
+\end{table}
