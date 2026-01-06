@@ -214,7 +214,6 @@
             echo "  - Frama-C:      $(frama-c -version | head -1)"
             echo "  - Why3:         $(why3 --version)"
             echo "  - CBMC:         $(cbmc --version | head -1)"
-            echo "  - KLEE:         $(klee --version 2>&1 | head -1 || echo 'Not available')"
             echo "  - AFL++:        $(afl-fuzz --version 2>&1 | head -1 || echo 'afl-cc available')"
             echo "  - Z3:           $(z3 --version)"
             echo ""
@@ -281,8 +280,6 @@
             export WHY3_CONFIG_DIR="$HOME/.why3"
             mkdir -p "$WHY3_CONFIG_DIR"
 
-            # KLEE environment (uncomment if using custom KLEE build)
-            # export KLEE_RUNTIME_LIBRARY_PATH="${pkgs.klee}/lib/klee/runtime"
 
             # Frama-C plugin path
             export FRAMAC_PLUGIN="${pkgs.framac}/lib/frama-c/plugins"

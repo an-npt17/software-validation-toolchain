@@ -1,0 +1,30 @@
+{
+  "requirement": "File must be opened before reading and closed after operations",
+  "ltl_formulas": [
+    {
+      "formula": "G(property)",
+      "confidence": 0.7,
+      "type": "safety"
+    },
+    {
+      "formula": "G(A -> F(B))",
+      "confidence": 0.6,
+      "type": "response"
+    }
+  ],
+  "acsl_specs": [
+    {
+      "type": "functional_correctness",
+      "precondition": "/*@ requires true; */",
+      "postcondition": null,
+      "confidence": 0.5
+    }
+  ],
+  "spin_result": {
+    "tool": "SPIN",
+    "status": "error",
+    "error": "spin -a failed: "
+  },
+  "framac_result": null,
+  "cbmc_result": null
+}

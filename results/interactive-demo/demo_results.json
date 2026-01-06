@@ -1,0 +1,76 @@
+{
+  "requirement": "wWhen two withdrawals are processed concurrently, the final account balance must reflect both withdrawals.",
+  "steps": [
+    {
+      "name": "Parse NL Requirement",
+      "status": "success",
+      "duration": 0.0005147457122802734,
+      "problems": []
+    },
+    {
+      "name": "Generate LTL Formulas",
+      "status": "success",
+      "duration": 0.00010943412780761719,
+      "problems": []
+    },
+    {
+      "name": "Generate ACSL Specs",
+      "status": "failed",
+      "duration": 0.0004622936248779297,
+      "problems": [
+        "Failed to generate ACSL: 'FormalRequirement' object has no attribute 'requirement_type'"
+      ]
+    },
+    {
+      "name": "Generate Verification Models",
+      "status": "failed",
+      "duration": 0.0004856586456298828,
+      "problems": [
+        "Failed to generate models: 'FormalRequirement' object has no attribute 'precondition'"
+      ]
+    },
+    {
+      "name": "Run Verification Tools",
+      "status": "warning",
+      "duration": 0.46353578567504883,
+      "problems": [
+        "Frama-C found verification failures",
+        "SPIN encountered an error"
+      ]
+    },
+    {
+      "name": "Analyze Results",
+      "status": "success",
+      "duration": 0.00014591217041015625,
+      "problems": [
+        "klee failed to run: KLEE or clang not installed",
+        "spin failed to run: cc1: fatal error: results/interactive-demo/model.pml: No such file or directory\ncompilation terminated.\n"
+      ]
+    }
+  ],
+  "ltl_formulas": [
+    {
+      "ltl": "G(safe_condition)",
+      "formula": "G(safe_condition)",
+      "type": "safety",
+      "confidence": 0.85
+    }
+  ],
+  "acsl_specs": [
+    {
+      "requirement_id": "req_3666",
+      "natural_language": "wWhen two withdrawals are processed concurrently, the final account balance must reflect both withdrawals.",
+      "property_type": "functional_correctness",
+      "acsl_precondition": "/*@ requires true; */",
+      "acsl_postcondition": null,
+      "acsl_assertion": null,
+      "applies_to_function": "verify_function",
+      "confidence": 0.5
+    }
+  ],
+  "overall_verdict": "error",
+  "problems_found": [
+    "klee failed to run: KLEE or clang not installed",
+    "spin failed to run: cc1: fatal error: results/interactive-demo/model.pml: No such file or directory\ncompilation terminated.\n"
+  ]
+}
