@@ -1,0 +1,20 @@
+never mutex {    /* !([] ((critical<=1))) */
+T0_init:
+	do
+	:: atomic { (! (((critical<=1)))) -> assert(!(! (((critical<=1))))) }
+	:: (1) -> goto T0_init
+	od;
+accept_all:
+	skip
+}
+never progress {    /* !([] (<> ((critical==1)))) */
+T0_init:
+	do
+	:: (! (((critical==1)))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! (((critical==1)))) -> goto accept_S4
+	od;
+}

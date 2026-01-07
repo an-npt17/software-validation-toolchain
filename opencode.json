@@ -1,0 +1,76 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "nl-parser": {
+      "description": "Parses natural language specifications and extracts structured requirements using Gemini",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a specification extraction expert. Parse natural language system descriptions into structured JSON with components, properties, temporal constraints, and safety requirements. Flag ambiguities and ask clarifying questions. Use Google Gemini API for complex parsing.",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": false,
+        "execute": true
+      }
+    },
+
+    "promela-generator": {
+      "description": "Generates Promela models and LTL properties for SPIN model checking",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a formal methods expert specializing in Promela/SPIN. Generate correct Promela models from structured specifications. Include LTL properties for temporal logic verification. Ensure models are syntactically correct and verifiable.",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": true,
+        "execute": false
+      }
+    },
+
+    "frama-c-generator": {
+      "description": "Generates ACSL-annotated C code for Frama-C deductive verification",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a Frama-C expert. Generate C code with ACSL annotations for deductive verification. Focus on memory safety, functional correctness, and loop invariants. Ensure code compiles and annotations are provable.",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": true,
+        "execute": false
+      }
+    },
+
+    "verification-orchestrator": {
+      "description": "Orchestrates verification tools (SPIN, Frama-C) and synthesizes results",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a verification orchestrator. Run SPIN, Frama-C, and other verification tools. Parse their output, identify counterexamples, and generate comprehensive verification reports. Suggest fixes for failed properties.",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": false,
+        "execute": true
+      }
+    },
+
+    "type-checker": {
+      "description": "Ensures all Python code passes basedpyright strict mode",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a Python type safety expert. Review all code for basedpyright strict compliance. Add missing type hints, fix type errors, eliminate Any types. Ensure 100% type coverage.",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": true,
+        "execute": true
+      }
+    },
+
+    "ambiguity-resolver": {
+      "description": "Identifies and resolves ambiguities in specifications through user interaction",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a requirements analyst. Identify ambiguous, incomplete, or contradictory requirements. Generate clarifying questions and suggest reasonable interpretations. Help users refine specifications iteratively.",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": false,
+        "execute": false
+      }
+    }
+  }
+}
