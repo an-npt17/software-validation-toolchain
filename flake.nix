@@ -1,7 +1,7 @@
 # flake.nix - Complete Formal Verification Toolchain
 # Includes: Frama-C, Why3, CBMC, KLEE, AFL++, and supporting tools
 {
-  description = "Complete formal verification toolchain for C/C++";
+  description = "Complete formal verification toolchain for C/C++ and Dafny";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -23,12 +23,40 @@
           config.allowBroken = true; # For KLEE and other broken packages
         };
 
+        # Python environment with LLM and benchmark tools
+        pythonEnv = pkgs.python311.withPackages (ps: with ps; [
+          # LLM APIs
+          google-generativeai
+          python-dotenv
+
+          # CLI output and formatting
+          rich
+          click
+          tabulate
+
+          # Data processing
+          pandas
+          jsonlines
+
+          # Utilities
+          requests
+          tqdm
+        ]);
+
       in
       {
         devShells.default = pkgs.mkShell {
           name = "formal-verification-env";
 
           buildInputs = with pkgs; [
+            # ============================================
+            # DAFNY VERIFICATION
+            # ============================================
+            dafny
+
+            # Python environment (defined above)
+            pythonEnv
+
             # ============================================
             # CORE COMPILERS & BUILD TOOLS
             # ============================================
@@ -208,6 +236,7 @@
             echo "=================================================="
             echo ""
             echo "Core Verification Tools:"
+            echo "  - Dafny:        $(dafny --version 2>&1 | head -1 | cut -d' ' -f2 || echo 'Available')"
             echo "  - Frama-C:      $(frama-c -version | head -1)"
             echo "  - Why3:         $(why3 --version)"
             echo "  - CBMC:         $(cbmc --version | head -1)"
@@ -242,15 +271,24 @@
             echo "=================================================="
             echo ""
             echo "Quick Start Commands:"
+            echo ""
+            echo "Dafny Verification:"
+            echo "  dafny verify program.dfy         # Verify Dafny program"
+            echo "  python explore_benchmark.py      # Explore benchmark data"
+            echo "  python verify_benchmark.py       # Run benchmark verification"
+            echo ""
+            echo "C Verification:"
             echo "  frama-c -wp your_file.c          # Weakest precondition"
             echo "  cbmc your_file.c --bounds-check  # Bounded model check"
             echo "  klee your_file.bc                # Symbolic execution"
+            echo ""
+            echo "Model Checking:"
             echo "  spin -a model.pml                # Generate SPIN verifier"
             echo "  ltl2tgba 'G(p -> F q)'           # LTL to automaton (SPOT)"
             echo "  NuSMV model.smv                  # Symbolic model check"
-            echo "  plantuml diagram.puml            # Generate UML diagram"
             echo ""
-            echo "Setup compilation database:"
+            echo "Utilities:"
+            echo "  plantuml diagram.puml            # Generate UML diagram"
             echo "  bear -- make                     # Generate compile_commands.json"
             echo ""
             echo "Python LLM Integration:"

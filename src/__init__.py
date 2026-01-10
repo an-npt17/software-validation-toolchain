@@ -1,1 +1,0 @@
-"""Formal verification pipeline package."""
