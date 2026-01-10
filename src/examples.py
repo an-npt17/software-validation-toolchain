@@ -1,6 +1,6 @@
 """Example formal models for testing without API calls."""
 
-from src.types import ACSLSpecification, PromelaModel, SystemDescription
+from src.types import ACSLSpecification, PromelaModel
 
 # Mutex example - deliberately has potential for deadlock
 MUTEX_PROMELA = PromelaModel(
@@ -172,7 +172,8 @@ ltl no_deadlock { []<> (eating[0] == 1 || eating[1] == 1 || eating[2] == 1) }
 
 
 def get_example(name: str) -> tuple[PromelaModel | None, ACSLSpecification | None]:
-    """Get example models by name.
+    """
+    Get example models by name.
 
     Args:
         name: Example name ('mutex' or 'dining_philosophers')

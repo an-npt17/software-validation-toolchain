@@ -57,8 +57,12 @@ class ACSLSpecification:
 
 @dataclass(frozen=True)
 class SystemDescription:
-    """Natural language description of a system to verify."""
+    """Natural language description of a system to verify.
+
+    The system_type can be any string - the verification toolchain will handle
+    validation and interpretation of the type during verification.
+    """
 
     description: str
-    system_type: Literal["mutex", "concurrent", "safety_critical", "distributed"]
+    system_type: str  # Accept any system type - let toolchain validate
     expected_properties: list[str]

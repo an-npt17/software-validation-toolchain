@@ -1,0 +1,100 @@
+{
+  "summary": {
+    "total_benchmarks": 5,
+    "by_source": {
+      "apps": 5
+    },
+    "ltl_success_rate": 0.6,
+    "acsl_success_rate": 0.4,
+    "promela_success_rate": 0.6,
+    "avg_generation_time": 91.05275168418885,
+    "spin_success_rate": 0.0,
+    "framac_success_rate": 0.0,
+    "combined_success_rate": 0.0,
+    "avg_verification_time": 4.0578842163085935e-05,
+    "total_properties_checked": 54,
+    "total_properties_verified": 26,
+    "property_verification_rate": 0.48148148148148145,
+    "avg_total_time": 91.05279226303101,
+    "timeout_rate": 0.0,
+    "error_rate": 0.0,
+    "comparison_notes": "Evaluated on Vericoding NL descriptions"
+  },
+  "detailed_results": [
+    {
+      "benchmark_id": "DA0000",
+      "source": "apps",
+      "ltl_generated": true,
+      "acsl_generated": false,
+      "promela_generated": true,
+      "generation_time": 71.69133734703064,
+      "spin_status": "error",
+      "framac_status": "not_run",
+      "properties_checked": 6,
+      "properties_verified": 0,
+      "verification_time": 3.337860107421875e-05,
+      "spec_quality_score": 0.3,
+      "error_message": null
+    },
+    {
+      "benchmark_id": "DA0001",
+      "source": "apps",
+      "ltl_generated": false,
+      "acsl_generated": false,
+      "promela_generated": false,
+      "generation_time": 73.99134874343872,
+      "spin_status": "not_run",
+      "framac_status": "not_run",
+      "properties_checked": 0,
+      "properties_verified": 0,
+      "verification_time": 4.5299530029296875e-05,
+      "spec_quality_score": 0.0,
+      "error_message": null
+    },
+    {
+      "benchmark_id": "DA0002",
+      "source": "apps",
+      "ltl_generated": true,
+      "acsl_generated": true,
+      "promela_generated": true,
+      "generation_time": 166.74705410003662,
+      "spin_status": "error",
+      "framac_status": "failure",
+      "properties_checked": 41,
+      "properties_verified": 26,
+      "verification_time": 4.410743713378906e-05,
+      "spec_quality_score": 0.6,
+      "error_message": null
+    },
+    {
+      "benchmark_id": "DA0003",
+      "source": "apps",
+      "ltl_generated": true,
+      "acsl_generated": false,
+      "promela_generated": true,
+      "generation_time": 67.14202976226807,
+      "spin_status": "error",
+      "framac_status": "not_run",
+      "properties_checked": 7,
+      "properties_verified": 0,
+      "verification_time": 3.075599670410156e-05,
+      "spec_quality_score": 0.3,
+      "error_message": null
+    },
+    {
+      "benchmark_id": "DA0004",
+      "source": "apps",
+      "ltl_generated": false,
+      "acsl_generated": true,
+      "promela_generated": false,
+      "generation_time": 75.69198846817017,
+      "spin_status": "not_run",
+      "framac_status": "error",
+      "properties_checked": 0,
+      "properties_verified": 0,
+      "verification_time": 4.935264587402344e-05,
+      "spec_quality_score": 0.3,
+      "error_message": null
+    }
+  ]
+}

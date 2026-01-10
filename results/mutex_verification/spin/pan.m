@@ -20,194 +20,203 @@
 		_m = 3; goto P999;
 
 		 /* PROC :init: */
-	case 3: // STATE 1 - model.pml:91 - [flag[0] = 0] (0:0:1 - 1)
+	case 3: // STATE 1 - model.pml:90 - [(run P1())] (0:0:0 - 1)
 		IfNotBlocked
-		reached[1][1] = 1;
-		(trpt+1)->bup.oval = ((int)now.flag[0]);
-		now.flag[0] = 0;
-#ifdef VAR_RANGES
-		logval("flag[0]", ((int)now.flag[0]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 4: // STATE 2 - model.pml:92 - [flag[1] = 0] (0:0:1 - 1)
-		IfNotBlocked
-		reached[1][2] = 1;
-		(trpt+1)->bup.oval = ((int)now.flag[1]);
-		now.flag[1] = 0;
-#ifdef VAR_RANGES
-		logval("flag[1]", ((int)now.flag[1]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 5: // STATE 3 - model.pml:93 - [turn = 0] (0:0:1 - 1)
-		IfNotBlocked
-		reached[1][3] = 1;
-		(trpt+1)->bup.oval = ((int)now.turn);
-		now.turn = 0;
-#ifdef VAR_RANGES
-		logval("turn", ((int)now.turn));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 6: // STATE 4 - model.pml:95 - [request[0] = 0] (0:0:1 - 1)
-		IfNotBlocked
-		reached[1][4] = 1;
-		(trpt+1)->bup.oval = ((int)request[0]);
-		request[0] = 0;
-#ifdef VAR_RANGES
-		logval("request[0]", ((int)request[0]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 7: // STATE 5 - model.pml:96 - [request[1] = 0] (0:0:1 - 1)
-		IfNotBlocked
-		reached[1][5] = 1;
-		(trpt+1)->bup.oval = ((int)request[1]);
-		request[1] = 0;
-#ifdef VAR_RANGES
-		logval("request[1]", ((int)request[1]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 8: // STATE 6 - model.pml:97 - [in_cs[0] = 0] (0:0:1 - 1)
-		IfNotBlocked
-		reached[1][6] = 1;
-		(trpt+1)->bup.oval = ((int)in_cs[0]);
-		in_cs[0] = 0;
-#ifdef VAR_RANGES
-		logval("in_cs[0]", ((int)in_cs[0]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 9: // STATE 7 - model.pml:98 - [in_cs[1] = 0] (0:0:1 - 1)
-		IfNotBlocked
-		reached[1][7] = 1;
-		(trpt+1)->bup.oval = ((int)in_cs[1]);
-		in_cs[1] = 0;
-#ifdef VAR_RANGES
-		logval("in_cs[1]", ((int)in_cs[1]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 10: // STATE 8 - model.pml:101 - [(run P(0))] (0:0:0 - 1)
-		IfNotBlocked
-		reached[1][8] = 1;
-		if (!(addproc(II, 1, 0, 0)))
+		reached[2][1] = 1;
+		if (!(addproc(II, 1, 0)))
 			continue;
 		_m = 3; goto P999; /* 0 */
-	case 11: // STATE 9 - model.pml:102 - [(run P(1))] (0:0:0 - 1)
+	case 4: // STATE 2 - model.pml:91 - [(run P2())] (0:0:0 - 1)
 		IfNotBlocked
-		reached[1][9] = 1;
-		if (!(addproc(II, 1, 0, 1)))
+		reached[2][2] = 1;
+		if (!(addproc(II, 1, 1)))
 			continue;
 		_m = 3; goto P999; /* 0 */
-	case 12: // STATE 10 - model.pml:103 - [-end-] (0:0:0 - 1)
+	case 5: // STATE 3 - model.pml:92 - [-end-] (0:0:0 - 1)
 		IfNotBlocked
-		reached[1][10] = 1;
+		reached[2][3] = 1;
 		if (!delproc(1, II)) continue;
 		_m = 3; goto P999; /* 0 */
 
-		 /* PROC P */
-	case 13: // STATE 2 - model.pml:40 - [request[id] = 1] (0:0:1 - 1)
+		 /* PROC P2 */
+	case 6: // STATE 2 - model.pml:64 - [P2_request = 1] (0:0:1 - 1)
+		IfNotBlocked
+		reached[1][2] = 1;
+		(trpt+1)->bup.oval = ((int)P2_request);
+		P2_request = 1;
+#ifdef VAR_RANGES
+		logval("P2_request", ((int)P2_request));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 7: // STATE 3 - model.pml:68 - [((sem>0))] (6:0:1 - 1)
+		IfNotBlocked
+		reached[1][3] = 1;
+		if (!((((int)now.sem)>0)))
+			continue;
+		/* merge: sem = (sem-1)(0, 4, 6) */
+		reached[1][4] = 1;
+		(trpt+1)->bup.oval = ((int)now.sem);
+		now.sem = (((int)now.sem)-1);
+#ifdef VAR_RANGES
+		logval("sem", ((int)now.sem));
+#endif
+		;
+		_m = 3; goto P999; /* 1 */
+	case 8: // STATE 6 - model.pml:71 - [P2_request = 0] (0:0:1 - 1)
+		IfNotBlocked
+		reached[1][6] = 1;
+		(trpt+1)->bup.oval = ((int)P2_request);
+		P2_request = 0;
+#ifdef VAR_RANGES
+		logval("P2_request", ((int)P2_request));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 9: // STATE 7 - model.pml:74 - [critical_section_count = (critical_section_count+1)] (0:0:1 - 1)
+		IfNotBlocked
+		reached[1][7] = 1;
+		(trpt+1)->bup.oval = ((int)critical_section_count);
+		critical_section_count = (((int)critical_section_count)+1);
+#ifdef VAR_RANGES
+		logval("critical_section_count", ((int)critical_section_count));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 10: // STATE 8 - model.pml:75 - [P2_in_CS = 1] (0:0:1 - 1)
+		IfNotBlocked
+		reached[1][8] = 1;
+		(trpt+1)->bup.oval = ((int)P2_in_CS);
+		P2_in_CS = 1;
+#ifdef VAR_RANGES
+		logval("P2_in_CS", ((int)P2_in_CS));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 11: // STATE 10 - model.pml:78 - [P2_in_CS = 0] (0:0:1 - 1)
+		IfNotBlocked
+		reached[1][10] = 1;
+		(trpt+1)->bup.oval = ((int)P2_in_CS);
+		P2_in_CS = 0;
+#ifdef VAR_RANGES
+		logval("P2_in_CS", ((int)P2_in_CS));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 12: // STATE 11 - model.pml:79 - [critical_section_count = (critical_section_count-1)] (0:0:1 - 1)
+		IfNotBlocked
+		reached[1][11] = 1;
+		(trpt+1)->bup.oval = ((int)critical_section_count);
+		critical_section_count = (((int)critical_section_count)-1);
+#ifdef VAR_RANGES
+		logval("critical_section_count", ((int)critical_section_count));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 13: // STATE 12 - model.pml:83 - [sem = (sem+1)] (0:0:1 - 1)
+		IfNotBlocked
+		reached[1][12] = 1;
+		(trpt+1)->bup.oval = ((int)now.sem);
+		now.sem = (((int)now.sem)+1);
+#ifdef VAR_RANGES
+		logval("sem", ((int)now.sem));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 14: // STATE 17 - model.pml:86 - [-end-] (0:0:0 - 1)
+		IfNotBlocked
+		reached[1][17] = 1;
+		if (!delproc(1, II)) continue;
+		_m = 3; goto P999; /* 0 */
+
+		 /* PROC P1 */
+	case 15: // STATE 2 - model.pml:27 - [P1_request = 1] (0:0:1 - 1)
 		IfNotBlocked
 		reached[0][2] = 1;
-		(trpt+1)->bup.oval = ((int)request[ Index(((int)((P0 *)_this)->id), 2) ]);
-		request[ Index(((P0 *)_this)->id, 2) ] = 1;
+		(trpt+1)->bup.oval = ((int)P1_request);
+		P1_request = 1;
 #ifdef VAR_RANGES
-		logval("request[P:id]", ((int)request[ Index(((int)((P0 *)_this)->id), 2) ]));
+		logval("P1_request", ((int)P1_request));
 #endif
 		;
 		_m = 3; goto P999; /* 0 */
-	case 14: // STATE 3 - model.pml:43 - [flag[id] = 1] (0:0:1 - 1)
+	case 16: // STATE 3 - model.pml:35 - [((sem>0))] (6:0:1 - 1)
 		IfNotBlocked
 		reached[0][3] = 1;
-		(trpt+1)->bup.oval = ((int)now.flag[ Index(((int)((P0 *)_this)->id), 2) ]);
-		now.flag[ Index(((P0 *)_this)->id, 2) ] = 1;
-#ifdef VAR_RANGES
-		logval("flag[P:id]", ((int)now.flag[ Index(((int)((P0 *)_this)->id), 2) ]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 15: // STATE 4 - model.pml:47 - [turn = (1-id)] (0:0:1 - 1)
-		IfNotBlocked
-		reached[0][4] = 1;
-		(trpt+1)->bup.oval = ((int)now.turn);
-		now.turn = (1-((int)((P0 *)_this)->id));
-#ifdef VAR_RANGES
-		logval("turn", ((int)now.turn));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 16: // STATE 5 - model.pml:55 - [((flag[(1-id)]&&(turn==(1-id))))] (0:0:0 - 1)
-		IfNotBlocked
-		reached[0][5] = 1;
-		if (!((((int)now.flag[ Index((1-((int)((P0 *)_this)->id)), 2) ])&&(((int)now.turn)==(1-((int)((P0 *)_this)->id))))))
+		if (!((((int)now.sem)>0)))
 			continue;
+		/* merge: sem = (sem-1)(0, 4, 6) */
+		reached[0][4] = 1;
+		(trpt+1)->bup.oval = ((int)now.sem);
+		now.sem = (((int)now.sem)-1);
+#ifdef VAR_RANGES
+		logval("sem", ((int)now.sem));
+#endif
+		;
+		_m = 3; goto P999; /* 1 */
+	case 17: // STATE 6 - model.pml:38 - [P1_request = 0] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][6] = 1;
+		(trpt+1)->bup.oval = ((int)P1_request);
+		P1_request = 0;
+#ifdef VAR_RANGES
+		logval("P1_request", ((int)P1_request));
+#endif
+		;
 		_m = 3; goto P999; /* 0 */
-	case 17: // STATE 12 - model.pml:67 - [in_cs[id] = 1] (0:0:1 - 3)
+	case 18: // STATE 7 - model.pml:41 - [critical_section_count = (critical_section_count+1)] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][7] = 1;
+		(trpt+1)->bup.oval = ((int)critical_section_count);
+		critical_section_count = (((int)critical_section_count)+1);
+#ifdef VAR_RANGES
+		logval("critical_section_count", ((int)critical_section_count));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 19: // STATE 8 - model.pml:42 - [P1_in_CS = 1] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][8] = 1;
+		(trpt+1)->bup.oval = ((int)P1_in_CS);
+		P1_in_CS = 1;
+#ifdef VAR_RANGES
+		logval("P1_in_CS", ((int)P1_in_CS));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 20: // STATE 10 - model.pml:45 - [P1_in_CS = 0] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][10] = 1;
+		(trpt+1)->bup.oval = ((int)P1_in_CS);
+		P1_in_CS = 0;
+#ifdef VAR_RANGES
+		logval("P1_in_CS", ((int)P1_in_CS));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 21: // STATE 11 - model.pml:46 - [critical_section_count = (critical_section_count-1)] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][11] = 1;
+		(trpt+1)->bup.oval = ((int)critical_section_count);
+		critical_section_count = (((int)critical_section_count)-1);
+#ifdef VAR_RANGES
+		logval("critical_section_count", ((int)critical_section_count));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 22: // STATE 12 - model.pml:52 - [sem = (sem+1)] (0:0:1 - 1)
 		IfNotBlocked
 		reached[0][12] = 1;
-		(trpt+1)->bup.oval = ((int)in_cs[ Index(((int)((P0 *)_this)->id), 2) ]);
-		in_cs[ Index(((P0 *)_this)->id, 2) ] = 1;
+		(trpt+1)->bup.oval = ((int)now.sem);
+		now.sem = (((int)now.sem)+1);
 #ifdef VAR_RANGES
-		logval("in_cs[P:id]", ((int)in_cs[ Index(((int)((P0 *)_this)->id), 2) ]));
+		logval("sem", ((int)now.sem));
 #endif
 		;
 		_m = 3; goto P999; /* 0 */
-	case 18: // STATE 13 - model.pml:69 - [cs_count = (cs_count+1)] (0:0:1 - 1)
-		IfNotBlocked
-		reached[0][13] = 1;
-		(trpt+1)->bup.oval = ((int)cs_count);
-		cs_count = (((int)cs_count)+1);
-#ifdef VAR_RANGES
-		logval("cs_count", ((int)cs_count));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 19: // STATE 15 - model.pml:77 - [cs_count = (cs_count-1)] (0:0:1 - 1)
-		IfNotBlocked
-		reached[0][15] = 1;
-		(trpt+1)->bup.oval = ((int)cs_count);
-		cs_count = (((int)cs_count)-1);
-#ifdef VAR_RANGES
-		logval("cs_count", ((int)cs_count));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 20: // STATE 16 - model.pml:79 - [in_cs[id] = 0] (0:0:1 - 1)
-		IfNotBlocked
-		reached[0][16] = 1;
-		(trpt+1)->bup.oval = ((int)in_cs[ Index(((int)((P0 *)_this)->id), 2) ]);
-		in_cs[ Index(((P0 *)_this)->id, 2) ] = 0;
-#ifdef VAR_RANGES
-		logval("in_cs[P:id]", ((int)in_cs[ Index(((int)((P0 *)_this)->id), 2) ]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 21: // STATE 17 - model.pml:82 - [flag[id] = 0] (0:0:1 - 1)
+	case 23: // STATE 17 - model.pml:55 - [-end-] (0:0:0 - 1)
 		IfNotBlocked
 		reached[0][17] = 1;
-		(trpt+1)->bup.oval = ((int)now.flag[ Index(((int)((P0 *)_this)->id), 2) ]);
-		now.flag[ Index(((P0 *)_this)->id, 2) ] = 0;
-#ifdef VAR_RANGES
-		logval("flag[P:id]", ((int)now.flag[ Index(((int)((P0 *)_this)->id), 2) ]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 22: // STATE 18 - model.pml:84 - [request[id] = 0] (0:0:1 - 1)
-		IfNotBlocked
-		reached[0][18] = 1;
-		(trpt+1)->bup.oval = ((int)request[ Index(((int)((P0 *)_this)->id), 2) ]);
-		request[ Index(((P0 *)_this)->id, 2) ] = 0;
-#ifdef VAR_RANGES
-		logval("request[P:id]", ((int)request[ Index(((int)((P0 *)_this)->id), 2) ]));
-#endif
-		;
-		_m = 3; goto P999; /* 0 */
-	case 23: // STATE 22 - model.pml:86 - [-end-] (0:0:0 - 1)
-		IfNotBlocked
-		reached[0][22] = 1;
 		if (!delproc(1, II)) continue;
 		_m = 3; goto P999; /* 0 */
 	case  _T5:	/* np_ */

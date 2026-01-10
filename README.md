@@ -2,17 +2,32 @@
 
 Complete environment for formal verification of C/C++ programs with **AI-powered** natural language specification support using **Google Gemini**.
 
+## ⭐ Natural Language Verification
+
+**Describe software in plain English → Automatically verify it!**
+
+```bash
+# Just describe what you want - no code needed!
+python scripts/nl_verify.py \
+  "A buffer that stores 100 items and prevents overflow"
+
+# Output: Generated models verified with SPIN and Frama-C ✓
+```
+
+See [Natural Language Usage Guide](docs/NATURAL_LANGUAGE_USAGE.md) for examples.
+
 ## Features
 
-- **AI-Powered Specification Generation**: Convert natural language requirements to formal specifications (ACSL/LTL) using Gemini 2.5 Flash
+- **🗣️ Natural Language Input**: Describe systems in plain English - tool generates and verifies formal models
+- **AI-Powered Generation**: Convert natural language to formal specs (ACSL/LTL) using Gemini
 - **Complete Verification Suite**: Frama-C, CBMC, KLEE, AFL++, and more
 - **Multi-Level Analysis**: Static verification, symbolic execution, fuzzing, model checking
 - **Reproducible Environment**: Nix-based setup with all dependencies managed
-- **Benchmark Testing**: validate the toolchain
+- **490+ Benchmarks**: Validate the toolchain with SV-COMP benchmarks
 
 ## 🧪 Testing the Toolchain
 
-The project includes to test the toolchain:
+The project includes 490+ benchmarks from the [SV-COMP repository](https://github.com/sosy-lab/sv-benchmarks) to test the toolchain:
 
 ```bash
 # Quick test (array benchmarks)
@@ -26,7 +41,10 @@ make benchmark-report
 firefox results/benchmark-run/report.html
 ```
 
-See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for detailed testing guide.
+**Benchmark Documentation:**
+- [BENCHMARKS.md](docs/BENCHMARKS.md) - Testing guide and usage
+- [BENCHMARK_SOURCES.md](docs/BENCHMARK_SOURCES.md) - Complete source references and citations
+- [BENCHMARK_QUICK_REFERENCE.md](docs/BENCHMARK_QUICK_REFERENCE.md) - Quick lookup guide
 
 ## Quick Start
 
@@ -91,6 +109,24 @@ This toolchain includes:
 
 - nl2ltl - Natural language to LTL (uses Gemini 2.5 Flash)
 - nl-to-acsl - Natural language to ACSL (uses Gemini 2.5 Flash)
+
+### 3. Try Natural Language Verification
+
+```bash
+# Describe what you want in plain English - no code needed!
+python scripts/nl_verify.py \
+  "A buffer that stores 100 integers. Writing to a full buffer should be prevented."
+
+# Interactive mode with guided prompts
+python scripts/nl_interactive.py
+
+# The tool automatically:
+# - Generates Promela model → verifies with SPIN
+# - Generates C + ACSL → verifies with Frama-C
+# - Reports any errors found
+```
+
+See **[Natural Language Usage Guide](docs/NATURAL_LANGUAGE_USAGE.md)** for more examples!
 
 ### 4. Test with Example Code
 

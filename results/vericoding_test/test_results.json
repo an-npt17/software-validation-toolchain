@@ -1,0 +1,54 @@
+{
+  "summary": {
+    "total": 4,
+    "successes": 1,
+    "failures": 3,
+    "success_rate": 0.25
+  },
+  "results": [
+    {
+      "id": "DA0000",
+      "source": "apps",
+      "success": false,
+      "spin_status": "success",
+      "framac_status": "error",
+      "spin_verified": 3,
+      "framac_verified": 0,
+      "execution_time": 72.07101702690125,
+      "error": null
+    },
+    {
+      "id": "DA0001",
+      "source": "apps",
+      "success": true,
+      "spin_status": "not_run",
+      "framac_status": "not_run",
+      "spin_verified": 0,
+      "framac_verified": 0,
+      "execution_time": 80.75775384902954,
+      "error": null
+    },
+    {
+      "id": "DA0002",
+      "source": "apps",
+      "success": false,
+      "spin_status": "not_run",
+      "framac_status": "error",
+      "spin_verified": 0,
+      "framac_verified": 0,
+      "execution_time": 63.93440318107605,
+      "error": null
+    },
+    {
+      "id": "DA0003",
+      "source": "apps",
+      "success": false,
+      "spin_status": "not_run",
+      "framac_status": "error",
+      "spin_verified": 0,
+      "framac_verified": 0,
+      "execution_time": 64.1360023021698,
+      "error": null
+    }
+  ]
+}

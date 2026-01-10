@@ -1,103 +1,92 @@
-// Promela model for a mutual exclusion system with two processes
-// using Peterson's Algorithm.
-// This algorithm is designed to ensure mutual exclusion, avoid deadlock,
-// and prevent starvation for two competing processes.
+// Promela model for a Mutual Exclusion System using a Binary Semaphore
 
-// Define process IDs for clarity and array indexing
-#define P0 0
-#define P1 1
+// Shared variables
+byte critical_section_count = 0; // Tracks the number of processes currently in the critical section.
+                                 // Used to verify mutual exclusion: should never exceed 1.
 
-// --- Shared Variables for Peterson's Algorithm ---
-// flag[i] = true if process i wants to enter the critical section
-bool flag[2];
-// turn indicates whose turn it is to enter the critical section if both want to enter.
-// If turn == i, process i has priority.
-byte turn;
+byte sem = 1; // Binary semaphore:
+              //   1 means the critical section is available (unlocked).
+              //   0 means the critical section is taken (locked).
+              // Initialized to 1, as the critical section is initially free.
 
-// --- Global Variables for Verification and State Tracking ---
-// cs_count: Tracks the number of processes currently in the critical section.
-// Used to verify mutual exclusion.
-byte cs_count = 0;
-// request[i]: True if process i is currently requesting access to the critical section.
-// Used for starvation/deadlock freedom properties.
-bool request[2];
-// in_cs[i]: True if process i is currently inside the critical section.
-// Used for starvation/deadlock freedom properties.
-bool in_cs[2];
+bool P1_request = false; // Flag indicating that Process 1 is requesting access to the critical section.
+bool P2_request = false; // Flag indicating that Process 2 is requesting access to the critical section.
+                         // These flags are used for verifying liveness properties (deadlock/starvation freedom).
 
-// --- Process Definition ---
-// Each process `P` is identified by a unique `id` (P0 or P1).
-proctype P(byte id) {
+bool P1_in_CS = false; // Flag indicating that Process 1 is currently inside the critical section.
+bool P2_in_CS = false; // Flag indicating that Process 2 is currently inside the critical section.
+                       // These flags are also used for verifying liveness properties.
+
+// Process P1: Repeatedly tries to enter its critical section
+proctype P1() {
     do
-    :: // --- Non-Critical Section ---
-       // Simulate some non-critical work. The `skip` statement represents
-       // an arbitrary amount of computation or delay.
-       // The SPIN model checker will explore all possible interleavings here.
-       skip;
+    :: non_critical_section_P1:
+        // Simulate some work in the non-critical section
+        skip;
 
-       // --- Request Phase (Entry Protocol for Peterson's Algorithm) ---
-       // 1. Indicate intent to enter CS.
-       request[id] = true;
+        P1_request = true; // P1 indicates its intention to enter the critical section.
 
-       // 2. Set own flag to true, signaling desire to enter.
-       flag[id] = true;
-       
-       // 3. Yield turn to the other process (1 - id).
-       // This is crucial for preventing starvation.
-       turn = 1 - id;
+        // P operation (acquire semaphore / lock mutex):
+        // The 'atomic' block ensures that the check (sem > 0) and the decrement (sem--)
+        // happen as a single, indivisible operation. This prevents race conditions
+        // on the semaphore variable itself, ensuring its integrity.
+        // If sem is 0, the process blocks here until sem becomes > 0.
+        atomic {
+            (sem > 0) -> sem--;
+        }
 
-       // 4. Busy-wait loop:
-       // Process 'id' waits if the other process (1-id) also wants to enter
-       // AND it's the other process's turn.
-       // The `do ... od` loop allows for interleaving at each step,
-       // correctly modeling the busy-waiting behavior.
-       do
-       :: (flag[1-id] && turn == (1-id)) ->
-          // Condition is true: the other process wants to enter AND it's their turn.
-          // So, this process waits. `skip` represents a single step of waiting.
-          skip;
-       :: else ->
-          // Condition is false: either the other process doesn't want to enter,
-          // or it's not their turn. This process can proceed.
-          break; // Exit the busy-wait loop
-       od;
+        P1_request = false; // P1 has successfully acquired the mutex; it's no longer just "requesting".
 
-       // --- Critical Section ---
-       // Mark process 'id' as being in the critical section.
-       in_cs[id] = true;
-       // Increment the global counter for processes in CS.
-       cs_count++;
+        // Critical Section for P1
+        critical_section_count++; // Increment count as P1 enters CS
+        P1_in_CS = true;          // Set flag that P1 is in CS
+        // Simulate work inside the critical section
+        skip;
+        P1_in_CS = false;         // Clear flag as P1 leaves CS
+        critical_section_count--; // Decrement count as P1 leaves CS
 
-       // Simulate critical section work. This is where shared resources
-       // would be accessed exclusively.
-       skip;
-
-       // --- Leave Phase (Exit Protocol for Peterson's Algorithm) ---
-       // Decrement the global counter.
-       cs_count--;
-       // Mark process 'id' as having left the critical section.
-       in_cs[id] = false;
-       
-       // Set own flag to false, indicating no longer interested in CS.
-       flag[id] = false;
-       // Mark process 'id' as no longer requesting CS.
-       request[id] = false;
+        // V operation (release semaphore / unlock mutex):
+        // The 'atomic' block ensures that the increment (sem++) is an indivisible operation.
+        // This makes the critical section available for another process.
+        atomic {
+            sem++;
+        }
     od
 }
 
-// --- Initialization Process ---
+// Process P2: Repeatedly tries to enter its critical section
+proctype P2() {
+    do
+    :: non_critical_section_P2:
+        // Simulate some work in the non-critical section
+        skip;
+
+        P2_request = true; // P2 indicates its intention to enter the critical section.
+
+        // P operation (acquire semaphore / lock mutex)
+        atomic {
+            (sem > 0) -> sem--;
+        }
+
+        P2_request = false; // P2 has successfully acquired the mutex.
+
+        // Critical Section for P2
+        critical_section_count++; // Increment count as P2 enters CS
+        P2_in_CS = true;          // Set flag that P2 is in CS
+        // Simulate work inside the critical section
+        skip;
+        P2_in_CS = false;         // Clear flag as P2 leaves CS
+        critical_section_count--; // Decrement count as P2 leaves CS
+
+        // V operation (release semaphore / unlock mutex)
+        atomic {
+            sem++;
+        }
+    od
+}
+
+// Initialization process: Starts both P1 and P2
 init {
-    // Initialize all shared and tracking variables to their default states.
-    flag[P0] = false;
-    flag[P1] = false;
-    turn = P0; // Arbitrary initial turn, could be P1.
-
-    request[P0] = false;
-    request[P1] = false;
-    in_cs[P0] = false;
-    in_cs[P1] = false;
-
-    // Start the two processes.
-    run P(P0);
-    run P(P1);
+    run P1();
+    run P2();
 }

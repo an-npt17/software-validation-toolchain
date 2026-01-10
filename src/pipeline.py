@@ -18,9 +18,10 @@ class VerificationPipeline:
     def __init__(
         self,
         output_dir: Path = DEFAULT_OUTPUT_DIR,
-        gemini_model: str = "gemini-2.0-flash-exp",
+        gemini_model: str = "gemini-2.5-flash",
     ) -> None:
-        """Initialize the verification pipeline.
+        """
+        Initialize the verification pipeline.
 
         Args:
             output_dir: Directory to store all output files
@@ -40,7 +41,8 @@ class VerificationPipeline:
     def run_full_verification(
         self, system_desc: SystemDescription
     ) -> dict[str, VerificationResult]:
-        """Run complete verification pipeline on a system description.
+        """
+        Run complete verification pipeline on a system description.
 
         This generates both Promela and ACSL specifications, then runs
         SPIN and Frama-C verification on them respectively.
@@ -53,16 +55,16 @@ class VerificationPipeline:
         """
         results: dict[str, VerificationResult] = {}
 
-        print(f"\n{'='*70}")
-        print(f"FORMAL VERIFICATION PIPELINE")
-        print(f"{'='*70}")
+        print(f"\n{'=' * 70}")
+        print("FORMAL VERIFICATION PIPELINE")
+        print(f"{'=' * 70}")
         print(f"\nSystem: {system_desc.description}")
         print(f"Type: {system_desc.system_type}")
 
         # Generate and verify with SPIN
-        print(f"\n{'-'*70}")
+        print(f"\n{'-' * 70}")
         print("Phase 1: Promela/SPIN Verification")
-        print(f"{'-'*70}")
+        print(f"{'-' * 70}")
 
         try:
             print("\n[1/2] Generating Promela model with Gemini API...")
@@ -86,9 +88,9 @@ class VerificationPipeline:
             print(f"✗ SPIN verification failed: {e}")
 
         # Generate and verify with Frama-C
-        print(f"\n{'-'*70}")
+        print(f"\n{'-' * 70}")
         print("Phase 2: ACSL/Frama-C Verification")
-        print(f"{'-'*70}")
+        print(f"{'-' * 70}")
 
         try:
             print("\n[1/2] Generating C code with ACSL using Gemini API...")
@@ -117,7 +119,8 @@ class VerificationPipeline:
         return results
 
     def _print_result(self, result: VerificationResult) -> None:
-        """Print a verification result in a formatted way.
+        """
+        Print a verification result in a formatted way.
 
         Args:
             result: The verification result to print
@@ -150,7 +153,8 @@ class VerificationPipeline:
                 print(f"    ... and {len(result.warnings) - 3} more")
 
     def _print_summary(self, results: dict[str, VerificationResult]) -> None:
-        """Print overall summary of verification results.
+        """
+        Print overall summary of verification results.
 
         Args:
             results: Dictionary of verification results
@@ -164,20 +168,22 @@ class VerificationPipeline:
             print("No verification results available.")
             return
 
-        print(f"{'Tool':<15} {'Status':<12} {'Checked':<10} {'Verified':<10} {'Time':<10}")
-        print(f"{'-'*70}")
+        print(
+            f"{'Tool':<15} {'Status':<12} {'Checked':<10} {'Verified':<10} {'Time':<10}"
+        )
+        print(f"{'-' * 70}")
 
         for tool_name, result in results.items():
             print(
-                f"{tool_name:<15} "
-                f"{result.status.value:<12} "
-                f"{result.properties_checked:<10} "
-                f"{result.properties_verified:<10} "
-                f"{result.execution_time:.2f}s"
+                f"""{tool_name:<15}
+                {result.status.value:<12}
+                {result.properties_checked:<10}
+                {result.properties_verified:<10}
+                {result.execution_time:.2f}s"""
             )
 
         # Overall assessment
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         all_success = all(r.status.value == "success" for r in results.values())
         any_failure = any(r.status.value == "failure" for r in results.values())
 
@@ -190,7 +196,7 @@ class VerificationPipeline:
         else:
             print("⚠ VERIFICATION COMPLETED WITH WARNINGS")
 
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         # Print output file locations
         print("Output files saved to:")

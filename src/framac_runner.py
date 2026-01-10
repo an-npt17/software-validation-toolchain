@@ -7,7 +7,12 @@ import time
 from pathlib import Path
 from typing import Final
 
-from src.types import ACSLSpecification, VerificationResult, VerificationStatus, VerificationTool
+from src.types import (
+    ACSLSpecification,
+    VerificationResult,
+    VerificationStatus,
+    VerificationTool,
+)
 
 FRAMAC_TIMEOUT: Final[int] = 300  # 5 minutes
 
@@ -16,7 +21,8 @@ class FramaCRunner:
     """Executes Frama-C verifier on C code with ACSL specifications."""
 
     def __init__(self, output_dir: Path | None = None) -> None:
-        """Initialize the Frama-C runner.
+        """
+        Initialize the Frama-C runner.
 
         Args:
             output_dir: Directory to store output files. If None, uses temp directory
@@ -27,7 +33,8 @@ class FramaCRunner:
     def verify(
         self, spec: ACSLSpecification, spec_name: str = "program"
     ) -> VerificationResult:
-        """Run Frama-C verification on C code with ACSL.
+        """
+        Run Frama-C verification on C code with ACSL.
 
         Args:
             spec: The ACSL specification to verify
@@ -56,8 +63,10 @@ class FramaCRunner:
                 [
                     "frama-c",
                     "-wp",
-                    "-wp-prover", "alt-ergo,z3,cvc5",
-                    "-wp-timeout", "30",
+                    "-wp-prover",
+                    "alt-ergo,z3,cvc5",
+                    "-wp-timeout",
+                    "30",
                     "-wp-rte",  # Generate runtime error annotations
                     f"{spec_name}.c",
                 ],
@@ -74,7 +83,9 @@ class FramaCRunner:
 
             # Count proof obligations
             # Look for "Proved goals: XX / YY" format
-            proved_goals_match = re.search(r"Proved goals:\s*(\d+)\s*/\s*(\d+)", output_text)
+            proved_goals_match = re.search(
+                r"Proved goals:\s*(\d+)\s*/\s*(\d+)", output_text
+            )
             if proved_goals_match:
                 proved = int(proved_goals_match.group(1))
                 total = int(proved_goals_match.group(2))
@@ -118,7 +129,9 @@ class FramaCRunner:
                 # Some proofs are unknown or timed out
                 status = VerificationStatus.FAILURE
                 if unknown > 0:
-                    warnings.append(f"{unknown} proof obligations could not be determined")
+                    warnings.append(
+                        f"{unknown} proof obligations could not be determined"
+                    )
                 if timeout > 0:
                     warnings.append(f"{timeout} proof obligations timed out")
             else:
@@ -133,7 +146,9 @@ class FramaCRunner:
             warnings.extend(warning_lines)
 
         except subprocess.TimeoutExpired:
-            errors.append(f"Frama-C verification timed out after {FRAMAC_TIMEOUT} seconds")
+            errors.append(
+                f"Frama-C verification timed out after {FRAMAC_TIMEOUT} seconds"
+            )
             status = VerificationStatus.TIMEOUT
         except Exception as e:
             errors.append(f"Unexpected error: {str(e)}")
@@ -163,7 +178,8 @@ class FramaCRunner:
         properties_verified: int,
         execution_time: float,
     ) -> VerificationResult:
-        """Build a verification result object.
+        """
+        Build a verification result object.
 
         Args:
             model_path: Path to the C file

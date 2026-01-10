@@ -22,52 +22,67 @@ settable(void)
 {	Trans *T;
 	Trans *settr(int, int, int, int, int, char *, int, int, int);
 
-	trans = (Trans ***) emalloc(3*sizeof(Trans **));
+	trans = (Trans ***) emalloc(4*sizeof(Trans **));
 
-	/* proctype 1: :init: */
+	/* proctype 2: :init: */
 
-	trans[1] = (Trans **) emalloc(11*sizeof(Trans *));
+	trans[2] = (Trans **) emalloc(4*sizeof(Trans *));
 
-	trans[1][1]	= settr(22,0,2,3,3,"flag[0] = 0", 1, 2, 0);
-	trans[1][2]	= settr(23,0,3,4,4,"flag[1] = 0", 1, 2, 0);
-	trans[1][3]	= settr(24,0,4,5,5,"turn = 0", 1, 2, 0);
-	trans[1][4]	= settr(25,0,5,6,6,"request[0] = 0", 1, 2, 0);
-	trans[1][5]	= settr(26,0,6,7,7,"request[1] = 0", 1, 2, 0);
-	trans[1][6]	= settr(27,0,7,8,8,"in_cs[0] = 0", 1, 2, 0);
-	trans[1][7]	= settr(28,0,8,9,9,"in_cs[1] = 0", 1, 2, 0);
-	trans[1][8]	= settr(29,0,9,10,10,"(run P(0))", 0, 2, 0);
-	trans[1][9]	= settr(30,0,10,11,11,"(run P(1))", 0, 2, 0);
-	trans[1][10]	= settr(31,0,0,12,12,"-end-", 0, 3500, 0);
+	trans[2][1]	= settr(34,0,2,3,3,"(run P1())", 0, 2, 0);
+	trans[2][2]	= settr(35,0,3,4,4,"(run P2())", 0, 2, 0);
+	trans[2][3]	= settr(36,0,0,5,5,"-end-", 0, 3500, 0);
 
-	/* proctype 0: P */
+	/* proctype 1: P2 */
 
-	trans[0] = (Trans **) emalloc(23*sizeof(Trans *));
+	trans[1] = (Trans **) emalloc(18*sizeof(Trans *));
 
-	trans[0][20]	= settr(19,0,19,1,0,".(goto)", 0, 2, 0);
-	T = trans[0][19] = settr(18,0,0,0,0,"DO", 0, 2, 0);
-	    T->nxt	= settr(18,0,1,0,0,"DO", 0, 2, 0);
+	trans[1][15]	= settr(31,0,14,1,0,".(goto)", 0, 2, 0);
+	T = trans[1][14] = settr(30,0,0,0,0,"DO", 0, 2, 0);
+	    T->nxt	= settr(30,0,1,0,0,"DO", 0, 2, 0);
+	trans[1][1]	= settr(17,0,2,1,0,"(1)", 0, 2, 0);
+	trans[1][2]	= settr(18,0,5,6,6,"P2_request = 1", 1, 2, 0);
+	T = trans[ 1][5] = settr(21,2,0,0,0,"ATOMIC", 1, 2, 0);
+	T->nxt	= settr(21,2,3,0,0,"ATOMIC", 1, 2, 0);
+	trans[1][3]	= settr(19,4,6,7,7,"((sem>0))", 1, 2, 0); /* m: 4 -> 6,0 */
+	reached1[4] = 1;
+	trans[1][4]	= settr(0,0,0,0,0,"sem = (sem-1)",0,0,0);
+	trans[1][6]	= settr(22,0,7,8,8,"P2_request = 0", 1, 2, 0);
+	trans[1][7]	= settr(23,0,8,9,9,"critical_section_count = (critical_section_count+1)", 1, 2, 0);
+	trans[1][8]	= settr(24,0,9,10,10,"P2_in_CS = 1", 1, 2, 0);
+	trans[1][9]	= settr(25,0,10,1,0,"(1)", 0, 2, 0);
+	trans[1][10]	= settr(26,0,11,11,11,"P2_in_CS = 0", 1, 2, 0);
+	trans[1][11]	= settr(27,0,13,12,12,"critical_section_count = (critical_section_count-1)", 1, 2, 0);
+	T = trans[ 1][13] = settr(29,2,0,0,0,"ATOMIC", 1, 2, 0);
+	T->nxt	= settr(29,2,12,0,0,"ATOMIC", 1, 2, 0);
+	trans[1][12]	= settr(28,0,14,13,13,"sem = (sem+1)", 1, 2, 0);
+	trans[1][16]	= settr(32,0,17,1,0,"break", 0, 2, 0);
+	trans[1][17]	= settr(33,0,0,14,14,"-end-", 0, 3500, 0);
+
+	/* proctype 0: P1 */
+
+	trans[0] = (Trans **) emalloc(18*sizeof(Trans *));
+
+	trans[0][15]	= settr(14,0,14,1,0,".(goto)", 0, 2, 0);
+	T = trans[0][14] = settr(13,0,0,0,0,"DO", 0, 2, 0);
+	    T->nxt	= settr(13,0,1,0,0,"DO", 0, 2, 0);
 	trans[0][1]	= settr(0,0,2,1,0,"(1)", 0, 2, 0);
-	trans[0][2]	= settr(1,0,3,13,13,"request[id] = 1", 1, 2, 0);
-	trans[0][3]	= settr(2,0,4,14,14,"flag[id] = 1", 1, 2, 0);
-	trans[0][4]	= settr(3,0,9,15,15,"turn = (1-id)", 1, 2, 0);
-	trans[0][10]	= settr(9,0,9,1,0,".(goto)", 0, 2, 0);
-	T = trans[0][9] = settr(8,0,0,0,0,"DO", 0, 2, 0);
-	T = T->nxt	= settr(8,0,5,0,0,"DO", 0, 2, 0);
-	    T->nxt	= settr(8,0,7,0,0,"DO", 0, 2, 0);
-	trans[0][5]	= settr(4,0,6,16,0,"((flag[(1-id)]&&(turn==(1-id))))", 1, 2, 0);
-	trans[0][6]	= settr(5,0,9,1,0,"(1)", 0, 2, 0);
-	trans[0][7]	= settr(6,0,12,2,0,"else", 0, 2, 0);
-	trans[0][8]	= settr(7,0,12,1,0,"goto :b1", 0, 2, 0);
-	trans[0][11]	= settr(10,0,12,1,0,"break", 0, 2, 0);
-	trans[0][12]	= settr(11,0,13,17,17,"in_cs[id] = 1", 1, 2, 0);
-	trans[0][13]	= settr(12,0,14,18,18,"cs_count = (cs_count+1)", 1, 2, 0);
-	trans[0][14]	= settr(13,0,15,1,0,"(1)", 0, 2, 0);
-	trans[0][15]	= settr(14,0,16,19,19,"cs_count = (cs_count-1)", 1, 2, 0);
-	trans[0][16]	= settr(15,0,17,20,20,"in_cs[id] = 0", 1, 2, 0);
-	trans[0][17]	= settr(16,0,18,21,21,"flag[id] = 0", 1, 2, 0);
-	trans[0][18]	= settr(17,0,19,22,22,"request[id] = 0", 1, 2, 0);
-	trans[0][21]	= settr(20,0,22,1,0,"break", 0, 2, 0);
-	trans[0][22]	= settr(21,0,0,23,23,"-end-", 0, 3500, 0);
+	trans[0][2]	= settr(1,0,5,15,15,"P1_request = 1", 1, 2, 0);
+	T = trans[ 0][5] = settr(4,2,0,0,0,"ATOMIC", 1, 2, 0);
+	T->nxt	= settr(4,2,3,0,0,"ATOMIC", 1, 2, 0);
+	trans[0][3]	= settr(2,4,6,16,16,"((sem>0))", 1, 2, 0); /* m: 4 -> 6,0 */
+	reached0[4] = 1;
+	trans[0][4]	= settr(0,0,0,0,0,"sem = (sem-1)",0,0,0);
+	trans[0][6]	= settr(5,0,7,17,17,"P1_request = 0", 1, 2, 0);
+	trans[0][7]	= settr(6,0,8,18,18,"critical_section_count = (critical_section_count+1)", 1, 2, 0);
+	trans[0][8]	= settr(7,0,9,19,19,"P1_in_CS = 1", 1, 2, 0);
+	trans[0][9]	= settr(8,0,10,1,0,"(1)", 0, 2, 0);
+	trans[0][10]	= settr(9,0,11,20,20,"P1_in_CS = 0", 1, 2, 0);
+	trans[0][11]	= settr(10,0,13,21,21,"critical_section_count = (critical_section_count-1)", 1, 2, 0);
+	T = trans[ 0][13] = settr(12,2,0,0,0,"ATOMIC", 1, 2, 0);
+	T->nxt	= settr(12,2,12,0,0,"ATOMIC", 1, 2, 0);
+	trans[0][12]	= settr(11,0,14,22,22,"sem = (sem+1)", 1, 2, 0);
+	trans[0][16]	= settr(15,0,17,1,0,"break", 0, 2, 0);
+	trans[0][17]	= settr(16,0,0,23,23,"-end-", 0, 3500, 0);
 	/* np_ demon: */
 	trans[_NP_] = (Trans **) emalloc(3*sizeof(Trans *));
 	T = trans[_NP_][0] = settr(9997,0,1,_T5,0,"(np_)", 1,2,0);

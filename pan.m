@@ -1,0 +1,231 @@
+#define rand	pan_rand
+#define pthread_equal(a,b)	((a)==(b))
+#if defined(HAS_CODE) && defined(VERBOSE)
+	#ifdef BFS_PAR
+		bfs_printf("Pr: %d Tr: %d\n", II, t->forw);
+	#else
+		cpu_printf("Pr: %d Tr: %d\n", II, t->forw);
+	#endif
+#endif
+	switch (t->forw) {
+	default: Uerror("bad forward move");
+	case 0:	/* if without executable clauses */
+		continue;
+	case 1: /* generic 'goto' or 'skip' */
+		IfNotBlocked
+		_m = 3; goto P999;
+	case 2: /* generic 'else' */
+		IfNotBlocked
+		if (trpt->o_pm&1) continue;
+		_m = 3; goto P999;
+
+		 /* CLAIM no_deadlock */
+	case 3: // STATE 1 - _spin_nvr.tmp:3 - [(!(((eating[0]||eating[1])||eating[2])))] (0:0:0 - 1)
+
+#if defined(VERI) && !defined(NP)
+#if NCLAIMS>1
+		{	static int reported1 = 0;
+			if (verbose && !reported1)
+			{	int nn = (int) ((Pclaim *)pptr(0))->_n;
+				printf("depth %ld: Claim %s (%d), state %d (line %d)\n",
+					depth, procname[spin_c_typ[nn]], nn, (int) ((Pclaim *)pptr(0))->_p, src_claim[ (int) ((Pclaim *)pptr(0))->_p ]);
+				reported1 = 1;
+				fflush(stdout);
+		}	}
+#else
+		{	static int reported1 = 0;
+			if (verbose && !reported1)
+			{	printf("depth %d: Claim, state %d (line %d)\n",
+					(int) depth, (int) ((Pclaim *)pptr(0))->_p, src_claim[ (int) ((Pclaim *)pptr(0))->_p ]);
+				reported1 = 1;
+				fflush(stdout);
+		}	}
+#endif
+#endif
+		reached[2][1] = 1;
+		if (!( !(((((int)now.eating[0])||((int)now.eating[1]))||((int)now.eating[2])))))
+			continue;
+		_m = 3; goto P999; /* 0 */
+	case 4: // STATE 8 - _spin_nvr.tmp:8 - [(!(((eating[0]||eating[1])||eating[2])))] (0:0:0 - 1)
+
+#if defined(VERI) && !defined(NP)
+#if NCLAIMS>1
+		{	static int reported8 = 0;
+			if (verbose && !reported8)
+			{	int nn = (int) ((Pclaim *)pptr(0))->_n;
+				printf("depth %ld: Claim %s (%d), state %d (line %d)\n",
+					depth, procname[spin_c_typ[nn]], nn, (int) ((Pclaim *)pptr(0))->_p, src_claim[ (int) ((Pclaim *)pptr(0))->_p ]);
+				reported8 = 1;
+				fflush(stdout);
+		}	}
+#else
+		{	static int reported8 = 0;
+			if (verbose && !reported8)
+			{	printf("depth %d: Claim, state %d (line %d)\n",
+					(int) depth, (int) ((Pclaim *)pptr(0))->_p, src_claim[ (int) ((Pclaim *)pptr(0))->_p ]);
+				reported8 = 1;
+				fflush(stdout);
+		}	}
+#endif
+#endif
+		reached[2][8] = 1;
+		if (!( !(((((int)now.eating[0])||((int)now.eating[1]))||((int)now.eating[2])))))
+			continue;
+		_m = 3; goto P999; /* 0 */
+	case 5: // STATE 13 - _spin_nvr.tmp:10 - [-end-] (0:0:0 - 1)
+
+#if defined(VERI) && !defined(NP)
+#if NCLAIMS>1
+		{	static int reported13 = 0;
+			if (verbose && !reported13)
+			{	int nn = (int) ((Pclaim *)pptr(0))->_n;
+				printf("depth %ld: Claim %s (%d), state %d (line %d)\n",
+					depth, procname[spin_c_typ[nn]], nn, (int) ((Pclaim *)pptr(0))->_p, src_claim[ (int) ((Pclaim *)pptr(0))->_p ]);
+				reported13 = 1;
+				fflush(stdout);
+		}	}
+#else
+		{	static int reported13 = 0;
+			if (verbose && !reported13)
+			{	printf("depth %d: Claim, state %d (line %d)\n",
+					(int) depth, (int) ((Pclaim *)pptr(0))->_p, src_claim[ (int) ((Pclaim *)pptr(0))->_p ]);
+				reported13 = 1;
+				fflush(stdout);
+		}	}
+#endif
+#endif
+		reached[2][13] = 1;
+		if (!delproc(1, II)) continue;
+		_m = 3; goto P999; /* 0 */
+
+		 /* PROC :init: */
+	case 6: // STATE 1 - proc.pml:58 - [i = 0] (0:0:1 - 1)
+		IfNotBlocked
+		reached[1][1] = 1;
+		(trpt+1)->bup.oval = ((int)((P1 *)_this)->_2_4_i);
+		((P1 *)_this)->_2_4_i = 0;
+#ifdef VAR_RANGES
+		logval(":init::i", ((int)((P1 *)_this)->_2_4_i));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 7: // STATE 2 - proc.pml:59 - [((i<3))] (0:0:0 - 1)
+		IfNotBlocked
+		reached[1][2] = 1;
+		if (!((((int)((P1 *)_this)->_2_4_i)<3)))
+			continue;
+		_m = 3; goto P999; /* 0 */
+	case 8: // STATE 3 - proc.pml:60 - [(run Philosopher(i))] (0:0:0 - 1)
+		IfNotBlocked
+		reached[1][3] = 1;
+		if (!(addproc(II, 1, 0, ((int)((P1 *)_this)->_2_4_i))))
+			continue;
+		_m = 3; goto P999; /* 0 */
+	case 9: // STATE 4 - proc.pml:61 - [i = (i+1)] (0:0:1 - 1)
+		IfNotBlocked
+		reached[1][4] = 1;
+		(trpt+1)->bup.oval = ((int)((P1 *)_this)->_2_4_i);
+		((P1 *)_this)->_2_4_i = (((int)((P1 *)_this)->_2_4_i)+1);
+#ifdef VAR_RANGES
+		logval(":init::i", ((int)((P1 *)_this)->_2_4_i));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 10: // STATE 11 - proc.pml:65 - [-end-] (0:0:0 - 1)
+		IfNotBlocked
+		reached[1][11] = 1;
+		if (!delproc(1, II)) continue;
+		_m = 3; goto P999; /* 0 */
+
+		 /* PROC Philosopher */
+	case 11: // STATE 1 - proc.pml:18 - [((fork[id]==0))] (0:0:0 - 1)
+		IfNotBlocked
+		reached[0][1] = 1;
+		if (!((((int)now.fork[ Index(((int)((P0 *)_this)->id), 3) ])==0)))
+			continue;
+		_m = 3; goto P999; /* 0 */
+	case 12: // STATE 2 - proc.pml:19 - [fork[id] = 1] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][2] = 1;
+		(trpt+1)->bup.oval = ((int)now.fork[ Index(((int)((P0 *)_this)->id), 3) ]);
+		now.fork[ Index(((P0 *)_this)->id, 3) ] = 1;
+#ifdef VAR_RANGES
+		logval("fork[Philosopher:id]", ((int)now.fork[ Index(((int)((P0 *)_this)->id), 3) ]));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 13: // STATE 4 - proc.pml:24 - [((fork[((id+1)%3)]==0))] (0:0:0 - 1)
+		IfNotBlocked
+		reached[0][4] = 1;
+		if (!((((int)now.fork[ Index(((((int)((P0 *)_this)->id)+1)%3), 3) ])==0)))
+			continue;
+		_m = 3; goto P999; /* 0 */
+	case 14: // STATE 5 - proc.pml:25 - [fork[((id+1)%3)] = 1] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][5] = 1;
+		(trpt+1)->bup.oval = ((int)now.fork[ Index(((((int)((P0 *)_this)->id)+1)%3), 3) ]);
+		now.fork[ Index(((((P0 *)_this)->id+1)%3), 3) ] = 1;
+#ifdef VAR_RANGES
+		logval("fork[((Philosopher:id+1)%3)]", ((int)now.fork[ Index(((((int)((P0 *)_this)->id)+1)%3), 3) ]));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 15: // STATE 7 - proc.pml:45 - [eating[id] = 1] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][7] = 1;
+		(trpt+1)->bup.oval = ((int)now.eating[ Index(((int)((P0 *)_this)->id), 3) ]);
+		now.eating[ Index(((P0 *)_this)->id, 3) ] = 1;
+#ifdef VAR_RANGES
+		logval("eating[Philosopher:id]", ((int)now.eating[ Index(((int)((P0 *)_this)->id), 3) ]));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 16: // STATE 8 - proc.pml:47 - [assert((eating[id]==1))] (0:0:0 - 1)
+		IfNotBlocked
+		reached[0][8] = 1;
+		spin_assert((((int)now.eating[ Index(((int)((P0 *)_this)->id), 3) ])==1), "(eating[id]==1)", II, tt, t);
+		_m = 3; goto P999; /* 0 */
+	case 17: // STATE 9 - proc.pml:48 - [eating[id] = 0] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][9] = 1;
+		(trpt+1)->bup.oval = ((int)now.eating[ Index(((int)((P0 *)_this)->id), 3) ]);
+		now.eating[ Index(((P0 *)_this)->id, 3) ] = 0;
+#ifdef VAR_RANGES
+		logval("eating[Philosopher:id]", ((int)now.eating[ Index(((int)((P0 *)_this)->id), 3) ]));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 18: // STATE 10 - proc.pml:30 - [fork[id] = 0] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][10] = 1;
+		(trpt+1)->bup.oval = ((int)now.fork[ Index(((int)((P0 *)_this)->id), 3) ]);
+		now.fork[ Index(((P0 *)_this)->id, 3) ] = 0;
+#ifdef VAR_RANGES
+		logval("fork[Philosopher:id]", ((int)now.fork[ Index(((int)((P0 *)_this)->id), 3) ]));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 19: // STATE 11 - proc.pml:31 - [fork[((id+1)%3)] = 0] (0:0:1 - 1)
+		IfNotBlocked
+		reached[0][11] = 1;
+		(trpt+1)->bup.oval = ((int)now.fork[ Index(((((int)((P0 *)_this)->id)+1)%3), 3) ]);
+		now.fork[ Index(((((P0 *)_this)->id+1)%3), 3) ] = 0;
+#ifdef VAR_RANGES
+		logval("fork[((Philosopher:id+1)%3)]", ((int)now.fork[ Index(((((int)((P0 *)_this)->id)+1)%3), 3) ]));
+#endif
+		;
+		_m = 3; goto P999; /* 0 */
+	case 20: // STATE 16 - proc.pml:52 - [-end-] (0:0:0 - 1)
+		IfNotBlocked
+		reached[0][16] = 1;
+		if (!delproc(1, II)) continue;
+		_m = 3; goto P999; /* 0 */
+	case  _T5:	/* np_ */
+		if (!((!(trpt->o_pm&4) && !(trpt->tau&128))))
+			continue;
+		/* else fall through */
+	case  _T2:	/* true */
+		_m = 3; goto P999;
+#undef rand
+	}
+
