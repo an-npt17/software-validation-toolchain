@@ -234,3 +234,13 @@ fuzz_input/
 artifacts/
 specs/
 benchmarks/*
+
+# Nix
+.direnv/
+result
+result-*
+
+# Verification outputs
+*.why
+*.frama/
+*.cbmc/

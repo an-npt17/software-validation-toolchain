@@ -1,13 +1,1 @@
-anthropic
-openai
-google-generativeai
-pydantic
-instructor
-langchain
-langchain-openai
-spacy
-nltk
-requests
-pytest
-black
-mypy
+google-generativeai>=0.3.0
