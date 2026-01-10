@@ -20,6 +20,7 @@ The benchmark contains **2,334 Dafny programs** from 9 different sources:
 ### Benchmark Structure
 
 Each benchmark entry contains:
+
 - **vc-description**: Natural language problem description
 - **vc-preamble**: Helper functions and predicates (requires/ensures)
 - **vc-spec**: Method specification with contracts
@@ -50,15 +51,18 @@ uv run python verify_benchmark.py
 ### Option 2: Manual Setup
 
 1. **Install Dafny**:
+
    - Download from https://github.com/dafny-lang/dafny/releases
    - Add to PATH
 
-2. **Install Python dependencies**:
+1. **Install Python dependencies**:
+
    ```bash
    uv sync
    ```
 
-3. **Configure environment**:
+1. **Configure environment**:
+
    ```bash
    cp .env.example .env
    # Edit .env and add your GOOGLE_API_KEY
@@ -130,6 +134,7 @@ VERBOSE=false
 The verification system generates three files per run:
 
 ### 1. Detailed Results JSON
+
 ```json
 {
   "id": "DH0000",
@@ -144,6 +149,7 @@ The verification system generates three files per run:
 ```
 
 ### 2. Summary JSON
+
 ```json
 {
   "total": 162,
@@ -161,6 +167,7 @@ The verification system generates three files per run:
 ```
 
 ### 3. Human-Readable Report
+
 ```
 DAFNY BENCHMARK VERIFICATION REPORT
 Generated: 2026-01-10 20:45:32
@@ -199,6 +206,7 @@ The system categorizes Dafny verification errors:
 ### Success Rate Analysis
 
 Expected outcomes for this benchmark:
+
 - Many programs contain placeholder implementations (`assume {:axiom} false`)
 - Real implementations would need to be added to verify successfully
 - The system measures the quality of specifications, not implementations
@@ -229,13 +237,14 @@ Expected outcomes for this benchmark:
 The codebase is designed to be extended:
 
 1. **Semantic Validation**: Uncomment Gemini integration in `verify_benchmark.py`
-2. **Custom Error Parsers**: Extend `parse_dafny_errors()` function
-3. **Additional Metrics**: Modify `VerificationResult` dataclass
-4. **Report Formats**: Add new output formats in `save_results()`
+1. **Custom Error Parsers**: Extend `parse_dafny_errors()` function
+1. **Additional Metrics**: Modify `VerificationResult` dataclass
+1. **Report Formats**: Add new output formats in `save_results()`
 
 ## 🔧 Troubleshooting
 
 ### Dafny Not Found
+
 ```bash
 # Make sure you're in the Nix shell
 nix develop
@@ -245,6 +254,7 @@ nix develop
 ```
 
 ### Verification Timeout
+
 ```bash
 # Increase timeout
 uv run python verify_benchmark.py --timeout 600
@@ -254,12 +264,14 @@ DAFNY_TIMEOUT=600
 ```
 
 ### Out of Memory
+
 ```bash
 # Verify in smaller batches
 uv run python verify_benchmark.py --max 100
 ```
 
 ### Python Package Issues
+
 ```bash
 # Resync dependencies
 uv sync
@@ -271,11 +283,13 @@ uv --version
 ## 📚 Resources
 
 ### Dafny
+
 - Official Docs: https://dafny.org/
 - Language Reference: https://dafny.org/latest/DafnyRef/DafnyRef
 - Tutorial: https://dafny.org/dafny/OnlineTutorial/guide
 
 ### Verification Concepts
+
 - Hoare Logic: Formal reasoning about program correctness
 - Loop Invariants: Properties that hold before/after each iteration
 - Weakest Precondition: Automated verification condition generation
@@ -319,6 +333,7 @@ cat verification_results/verification_results_*.json | \
 ## 🤝 Contributing
 
 Contributions are welcome! Areas for improvement:
+
 - Additional error type detection patterns
 - Better error message parsing
 - Integration with other verification tools
