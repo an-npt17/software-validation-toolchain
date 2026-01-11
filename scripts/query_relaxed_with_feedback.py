@@ -1,17 +1,24 @@
-import os
-import json
 import argparse
-import google.generativeai as genai
+import json
+import os
+import re
 import time
 
+import google.generativeai as genai
+from dotenv import load_dotenv
+from google.api_core import exceptions as google_exceptions
+
+load_dotenv()
 # Set up Gemini API
-api_key = os.environ.get("GEMINI_API_KEY")
+api_key = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
 if not api_key:
-    raise ValueError("GEMINI_API_KEY environment variable is not set")
+    raise ValueError("GOOGLE_API_KEY environment variable is not set")
 genai.configure(api_key=api_key)
 
 
-def chat_completion(messages, model="gemini-1.5-flash", temperature=0.7):
+def chat_completion(
+    messages, model="gemini-2.5-flash-lite", temperature=0.7, max_retries=5
+):
     # Convert OpenAI message format to Gemini format
     system_instruction = None
     chat_messages = []
@@ -28,20 +35,94 @@ def chat_completion(messages, model="gemini-1.5-flash", temperature=0.7):
         model_name=model, system_instruction=system_instruction
     )
 
-    # Start chat with history (exclude the last message as it will be sent separately)
-    if len(chat_messages) > 1:
-        chat = model_instance.start_chat(history=chat_messages[:-1])
-        response = chat.send_message(
-            chat_messages[-1]["parts"][0],
-            generation_config=genai.types.GenerationConfig(temperature=temperature),
-        )
-    else:
-        # If only one message, send it directly
-        chat = model_instance.start_chat(history=[])
-        response = chat.send_message(
-            chat_messages[0]["parts"][0],
-            generation_config=genai.types.GenerationConfig(temperature=temperature),
-        )
+    retry_count = 0
+    base_wait_time = 1  # Start with 1 second
+
+    while retry_count <= max_retries:
+        try:
+            # Start chat with history (exclude the last message as it will be sent separately)
+            if len(chat_messages) > 1:
+                chat = model_instance.start_chat(history=chat_messages[:-1])
+                response = chat.send_message(
+                    chat_messages[-1]["parts"][0],
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=temperature
+                    ),
+                )
+            else:
+                # If only one message, send it directly
+                chat = model_instance.start_chat(history=[])
+                response = chat.send_message(
+                    chat_messages[0]["parts"][0],
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=temperature
+                    ),
+                )
+
+            return response.text
+
+        except google_exceptions.ResourceExhausted as e:
+            # Handle 429 rate limit error
+            error_msg = str(e)
+
+            # Check if this is a daily quota limit (not just rate limit)
+            is_daily_quota = 'PerDay' in error_msg or 'quota_value' in error_msg
+
+            retry_count += 1
+            if retry_count > max_retries:
+                if is_daily_quota:
+                    print(f"\n{'='*60}")
+                    print("DAILY QUOTA EXCEEDED")
+                    print(f"{'='*60}")
+                    print("You've hit the daily quota limit for the Google API.")
+                    print("Options:")
+                    print("  1. Wait until your quota resets (usually 24 hours)")
+                    print("  2. Upgrade your API plan at: https://ai.google.dev/pricing")
+                    print("  3. Use a different model with higher quota")
+                    print(f"{'='*60}\n")
+                else:
+                    print(f"Max retries ({max_retries}) reached. Giving up.")
+                raise
+
+            # Try to extract wait time from error message or metadata
+            wait_time = base_wait_time * (2 ** (retry_count - 1))  # Exponential backoff
+
+            # Try to extract retry_delay from exception metadata
+            if hasattr(e, 'details') and e.details:
+                try:
+                    # Parse retry_delay from error details if available
+                    details_str = str(e.details)
+                    if 'retry_delay' in details_str or 'seconds' in details_str:
+                        # Look for seconds field in the error
+                        seconds_match = re.search(r'seconds[:\s]+(\d+)', details_str)
+                        if seconds_match:
+                            wait_time = int(seconds_match.group(1)) + 2  # Add buffer
+                except Exception:
+                    pass
+
+            # Look for various retry patterns in error message
+            retry_patterns = [
+                r'retry in (\d+(?:\.\d+)?)\s*s',  # "retry in 31.954905609s"
+                r'retry after (\d+)',              # "Retry after 30"
+                r'retry in (\d+)',                 # "retry in 30"
+            ]
+
+            for pattern in retry_patterns:
+                retry_match = re.search(pattern, error_msg, re.IGNORECASE)
+                if retry_match:
+                    # Round up and add small buffer
+                    wait_time = int(float(retry_match.group(1))) + 2
+                    break
+
+            print(
+                f"Rate limit hit (429). Waiting {wait_time} seconds before retry {retry_count}/{max_retries}..."
+            )
+            time.sleep(wait_time)
+
+        except Exception as e:
+            # Handle other exceptions
+            print(f"Error during API call: {type(e).__name__}: {e}")
+            raise
 
     return response.text
 
@@ -82,7 +163,7 @@ def form_query_response(instruction, system_prompt, previous_context=None):
     if previous_context:
         messages.extend(previous_context)
     messages.append({"role": "user", "content": instruction})
-    return chat_completion(messages, model="gemini-1.5-pro")
+    return chat_completion(messages, model="gemini-2.5-flash-lite", temperature=0.3)
 
 
 def read_tasks_in_order(folder_path):

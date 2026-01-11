@@ -20,82 +20,69 @@
           config.allowUnfree = true;
         };
 
-        # Python environment with dependencies
-        pythonEnv = pkgs.python312.withPackages (
-          ps: with ps; [
-            google-generativeai
-          ]
-        );
-
       in
       {
         devShells.default = pkgs.mkShell {
-          buildInputs =
-            with pkgs;
-            [
-              # Python and uv package manager
-              python312
-              uv
+          buildInputs = with pkgs; [
+            # Python and uv package manager
+            dafny
+            python312
+            uv
 
-              # Version control
-              git
+            # Version control
+            git
 
-              # Common build tools
-              gcc
-              cmake
-              gnumake
-              pkg-config
+            # Common build tools
+            gcc
+            cmake
+            gnumake
+            pkg-config
 
-              # Rust toolchain for Verus
-              rustc
-              cargo
-              rustfmt
+            # Rust toolchain for Verus
+            rustc
+            cargo
+            rustfmt
 
-              # OCaml ecosystem for Why3 and Frama-C
-              ocaml
-              opam
-              dune_3
-              ocamlPackages.findlib
+            # OCaml ecosystem for Why3 and Frama-C
+            ocaml
+            opam
+            dune_3
 
-              # Why3 and provers
-              why3
-              alt-ergo
-              z3
-              cvc5
+            # Why3 and provers
+            why3
+            alt-ergo
+            z3
+            cvc5
 
-              # Frama-C
-              frama-c
+            # Frama-C
+            framac
 
-              # CBMC
-              cbmc
+            # CBMC
+            cbmc
 
-              # Java for VerCors
-              jdk17
+            # Java for VerCors
+            jdk17
 
-              # .NET for Dafny
-              dotnet-sdk_8
+            # .NET for Dafny
+            dotnet-sdk_8
 
-              # Utilities
-              wget
-              curl
-              unzip
-              which
+            # Utilities
+            wget
+            curl
+            unzip
+            which
 
-              # Development tools
-              gnused
-              gawk
+            # Development tools
+            gnused
+            gawk
 
-            ]
-            ++ [
-              pythonEnv
-            ];
+          ];
 
           shellHook = ''
             echo "Software Validation Toolchain Development Environment"
             echo "======================================================"
             echo ""
             echo "Available tools:"
-            echo "  - Python ${pythonEnv.version} with google-generativeai"
             echo "  - uv (Python package manager)"
             echo "  - Why3 verification platform"
             echo "  - Frama-C static analyzer"
@@ -155,36 +142,35 @@
           DEBIAN_FRONTEND = "noninteractive";
         };
 
-        # Apps for running verification tools
-        apps = {
-          verify = flake-utils.lib.mkApp {
-            drv = pkgs.writeShellScriptBin "verify" ''
-              ${pythonEnv}/bin/python scripts/verify.py "$@"
-            '';
-          };
-
-          query = flake-utils.lib.mkApp {
-            drv = pkgs.writeShellScriptBin "query" ''
-              ${pythonEnv}/bin/python scripts/query_with_feedback.py "$@"
-            '';
-          };
-
-          query-relaxed = flake-utils.lib.mkApp {
-            drv = pkgs.writeShellScriptBin "query-relaxed" ''
-              ${pythonEnv}/bin/python scripts/query_relaxed_with_feedback.py "$@"
-            '';
-          };
-        };
-
+        # # Apps for running verification tools
+        # apps = {
+        #   verify = flake-utils.lib.mkApp {
+        #     drv = pkgs.writeShellScriptBin "verify" ''
+        #       ${pythonEnv}/bin/python scripts/verify.py "$@"
+        #     '';
+        #   };
+        #
+        #   query = flake-utils.lib.mkApp {
+        #     drv = pkgs.writeShellScriptBin "query" ''
+        #       ${pythonEnv}/bin/python scripts/query_with_feedback.py "$@"
+        #     '';
+        #   };
+        #
+        #   query-relaxed = flake-utils.lib.mkApp {
+        #     drv = pkgs.writeShellScriptBin "query-relaxed" ''
+        #       ${pythonEnv}/bin/python scripts/query_relaxed_with_feedback.py "$@"
+        #     '';
+        #   };
+        # };
+        #
         # Packages that can be built
         packages = {
           default = pkgs.buildEnv {
             name = "software-validation-toolchain";
             paths = with pkgs; [
-              pythonEnv
               uv
               why3
-              frama-c
+              framac
               cbmc
               z3
               alt-ergo
